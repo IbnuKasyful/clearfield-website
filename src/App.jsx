@@ -18,7 +18,8 @@ export default function App() {
 
   return (
     <>
-      <Preloader onDone={onLoaderDone} />
+      {/* Unmounted once the curtain has lifted — it has nothing left to do. */}
+      {!ready && <Preloader onDone={onLoaderDone} />}
       <ScrollProgress />
       <CustomCursor />
 
