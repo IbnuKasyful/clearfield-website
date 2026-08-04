@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { footer, contact, contactSection, emailHref } from '../data/site';
 import { gsap, prefersReducedMotion } from '../lib/motion';
 import PixelMark from './PixelMark';
+import SectionLink from './SectionLink';
 
 export default function Footer() {
   const markRef = useRef(null);
@@ -60,9 +61,9 @@ export default function Footer() {
             <p className="footer__column-title">{column.title}</p>
             <div className="footer__links">
               {column.links.map((link) => (
-                <a href={link.href} key={link.label}>
+                <SectionLink href={link.href} key={link.label}>
                   {link.label}
-                </a>
+                </SectionLink>
               ))}
             </div>
           </div>

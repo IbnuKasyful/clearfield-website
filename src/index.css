@@ -17,6 +17,12 @@
   --card-deep: #ece9e4;
 
   --on-dark: #f1efe9;
+  /* Text for light chips and buttons that sit on a dark panel. Unlike --ink it
+     stays dark in both themes, because the panel under it stays dark too. */
+  --on-light: #17191d;
+  /* The wordmark blue, for the always-white brand badge. Held apart from
+     --accent, which lightens in dark mode and would wash out on white. */
+  --brand-ink: #1e4f9e;
 
   --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   --serif: 'Source Serif 4', Georgia, serif;
@@ -27,6 +33,56 @@
   --radius-card: 20px;
   --radius-panel: 26px;
   --radius-media: 22px;
+
+  /* The floating nav pill is dark in both themes, so it carries its own
+     colours rather than the page tokens. */
+  --nav-h: 58px;
+  --nav-pad-y: 18px;
+  --nav-bg: #1b1c1e;
+  --nav-fg: #f7f7f5;
+  --nav-edge: transparent;
+
+  color-scheme: light;
+}
+
+/* -- dark theme -----------------------------------------------------------
+   Set by the pull switch (and pre-set by the inline script in index.html).
+   Only the tokens move; no component rule knows which theme is running.
+   -------------------------------------------------------------------------- */
+
+:root[data-theme='dark'] {
+  --accent: #6f9ff2;
+  --accent-strong: #8ab4ff;
+  --accent-2: #ff7a33;
+
+  --ink: #eceae4;
+  --dark: #171b22;
+  --darker: #101318;
+  --paper: #0d1015;
+  --card: #191d25;
+  --card-deep: #161a21;
+
+  --nav-bg: #1c2027;
+  --nav-edge: rgba(241, 239, 233, 0.1);
+
+  color-scheme: dark;
+}
+
+/* Cross-fade the surfaces while the lights change. The class is added for
+   half a second around the flip, so nothing carries the cost afterwards. */
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease,
+    fill 0.45s ease, box-shadow 0.45s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after {
+    transition: none !important;
+  }
 }
 
 *,
@@ -53,7 +109,12 @@ body {
   font-size: 15px;
   line-height: 1.55;
   text-wrap: pretty;
+  /* Contains the marquees. `clip` rather than `hidden` because hidden makes the
+     viewport a scroll container, which is what stops `position: sticky` working
+     for anything inside — the aside on the project page depends on it. Older
+     browsers fall back to the hidden above and simply lose the sticky. */
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -187,7 +248,7 @@ a {
 
 .btn--light {
   background: var(--on-dark);
-  color: var(--ink);
+  color: var(--on-light);
 }
 
 .btn--light:hover {
@@ -252,7 +313,8 @@ a {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 60;
+  /* Above the nav, or the header's scrim would paint over it. */
+  z-index: 120;
   height: 2px;
   width: 100%;
   background: var(--accent-2);
@@ -288,7 +350,8 @@ a {
   .has-cursor a,
   .has-cursor button,
   .has-cursor .project-card,
-  .has-cursor .service-row__head {
+  .has-cursor .service-row__head,
+  .has-cursor .why-card {
     cursor: none;
   }
 }
@@ -342,79 +405,400 @@ a {
   color: rgba(242, 240, 236, 0.6);
 }
 
-/* -- navigation ----------------------------------------------------------- */
+/* -- navigation -----------------------------------------------------------
+   A floating dark pill, centred, with the pull switch hanging in its own lane
+   to the right of it so the cord never crosses the pill.
+   -------------------------------------------------------------------------- */
 
-.nav {
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  padding: var(--nav-pad-y) var(--page-x) 0;
+  /* The header spans the width but only its children should catch the pointer. */
+  pointer-events: none;
+}
+
+.navbar > * {
+  pointer-events: auto;
+}
+
+/* Fades scrolled content out behind the floating pill instead of letting it
+   run through the gaps around it. Behind the children, above the page. */
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: calc(var(--nav-h) + var(--nav-pad-y) * 2 + 14px);
+  background: linear-gradient(to bottom, var(--paper) 42%, transparent);
+}
+
+/* Clears the fixed header. Hero and page sections add their own space on top. */
+.app-main {
+  padding: calc(var(--nav-pad-y) + var(--nav-h)) var(--page-x) 0;
+}
+
+.navpill {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 20px clamp(20px, 4vw, 56px);
-  font-size: 14px;
+  gap: clamp(16px, 2.4vw, 30px);
+  width: 100%;
+  max-width: 880px;
+  height: var(--nav-h);
+  padding: 6px 6px 6px 7px;
+  border: 1px solid var(--nav-edge);
+  border-radius: 999px;
+  background: var(--nav-bg);
+  color: var(--nav-fg);
+  box-shadow: 0 20px 44px -26px rgba(10, 14, 20, 0.8), 0 3px 8px -4px rgba(10, 14, 20, 0.35);
+  font-size: 14.5px;
 }
 
-.nav__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.nav__wordmark {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 21px;
-  letter-spacing: -0.01em;
-  color: var(--accent);
-}
-
-.nav__links {
+/* A circle holding the mark, which opens sideways into the full lockup —
+   mark plus wordmark — while the mark itself shrinks to make room. */
+.navpill__brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
-  flex-wrap: wrap;
+  flex: none;
+  height: calc(var(--nav-h) - 14px);
+  border-radius: 999px;
+  background: #fff;
+  overflow: hidden;
+  text-decoration: none;
 }
 
-.nav__links a {
+.navpill__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--nav-h) - 14px);
+  height: calc(var(--nav-h) - 14px);
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* max-width rather than width: the wordmark has no fixed size, and 130px is
+   comfortably past what "Clearfield" needs at this size. */
+.navpill__wordmark {
+  max-width: 0;
+  margin-right: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--brand-ink);
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width 0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-right 0.42s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+}
+
+/* Touch devices have no hover to leave, and a tap would strand it open. */
+@media (hover: hover) {
+  .navpill__brand:hover .navpill__mark {
+    transform: scale(0.82);
+  }
+
+  .navpill__brand:hover .navpill__wordmark {
+    max-width: 130px;
+    margin-right: 18px;
+    opacity: 1;
+  }
+}
+
+.navpill__brand:focus-visible .navpill__mark {
+  transform: scale(0.82);
+}
+
+.navpill__brand:focus-visible .navpill__wordmark {
+  max-width: 130px;
+  margin-right: 18px;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navpill__mark,
+  .navpill__wordmark {
+    transition-duration: 0.01ms;
+  }
+}
+
+.navpill__links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.4vw, 30px);
+  margin-left: 4px;
+}
+
+.navpill__link {
+  position: relative;
+  padding: 6px 1px;
+  color: color-mix(in srgb, var(--nav-fg) 86%, transparent);
+  font-weight: 500;
   text-decoration: none;
-  color: color-mix(in srgb, var(--ink) 78%, transparent);
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 
-.nav__links a:hover {
-  color: var(--accent);
+.navpill__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.nav__dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--ink) 40%, transparent);
+.navpill__link:hover {
+  color: var(--nav-fg);
 }
 
-.nav__toggle {
+.navpill__link:hover::after {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+}
+
+.navpill__cta {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-left: auto;
+  height: calc(var(--nav-h) - 14px);
+  padding: 0 clamp(16px, 2vw, 24px);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--on-light);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.navpill__cta:hover {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+/* The duplicate inside the dropdown — only ever one of the two is rendered. */
+.navpill__cta--menu {
+  display: none;
+}
+
+.navpill__toggle {
   display: none;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 44px;
-  height: 44px;
+  align-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
   margin-left: auto;
   padding: 0;
   border: 0;
+  border-radius: 50%;
   background: transparent;
   cursor: pointer;
 }
 
-.nav__toggle span {
+.navpill__toggle span {
   display: block;
-  width: 24px;
+  width: 20px;
   height: 2px;
   border-radius: 2px;
-  background: var(--ink);
+  background: var(--nav-fg);
   transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* -- pull switch ----------------------------------------------------------
+   The cord drops in from the top of the viewport. Its px geometry is mirrored
+   in PullSwitch.jsx — REST there is this cord's height.
+   -------------------------------------------------------------------------- */
+
+.pullswitch {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: var(--nav-h);
+  /* Pulls the anchor up to the very top edge so the cord reads as hanging
+     from off-screen rather than from the header. */
+  margin-top: calc(var(--nav-pad-y) * -1);
+  touch-action: none;
+}
+
+/* The cord and bead hang past this box, so the box itself must not sit over
+   the page catching clicks — only the two parts you can actually touch do.
+   Written against .navbar to outrank `.navbar > *`. */
+.navbar > .pullswitch {
+  pointer-events: none;
+}
+
+.pullswitch__cord,
+.pullswitch__knob {
+  pointer-events: auto;
+}
+
+/* Cord and bead swing together, pivoting where the cord meets the ceiling. */
+.pullswitch__hanger {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.pullswitch__cord {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 86px;
+  margin-left: -1px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ink) 22%, transparent),
+    color-mix(in srgb, var(--ink) 52%, transparent)
+  );
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+/* Widens the cord's hit area to a lane the cursor can realistically brush,
+   without widening the cord itself. */
+.pullswitch__cord::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -13px;
+  right: -13px;
+}
+
+.pullswitch__knob {
+  position: absolute;
+  top: 72px; /* cord length minus half the hit area */
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  will-change: transform;
+}
+
+.pullswitch__knob:active {
+  cursor: grabbing;
+}
+
+.pullswitch__bead {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.25s ease;
+}
+
+/* Lights on: a warm bulb, still glowing. */
+.pullswitch[data-lit='true'] .pullswitch__bead {
+  background: radial-gradient(circle at 34% 30%, #fff4d2, #f7b955 58%, #d98b1f);
+  box-shadow: 0 0 0 4px rgba(247, 185, 85, 0.16), 0 0 14px 2px rgba(247, 185, 85, 0.35);
+}
+
+/* Lights off: cool and dim, but never invisible against the dark page. */
+.pullswitch[data-lit='false'] .pullswitch__bead {
+  background: radial-gradient(circle at 34% 30%, #f3f5fb, #b9c2d4 58%, #7f8899);
+  box-shadow: 0 0 0 4px rgba(185, 194, 212, 0.1), 0 0 12px 2px rgba(185, 194, 212, 0.22);
+}
+
+.pullswitch__knob:hover .pullswitch__bead {
+  transform: scale(1.12);
+}
+
+/* Below this the four links no longer fit beside the address, so they move
+   into a dropdown that keeps the pill's dark surface. */
+@media (max-width: 780px) {
+  .navpill__toggle {
+    display: flex;
+  }
+
+  .navpill > .navpill__cta {
+    display: none;
+  }
+
+  .navpill__cta--menu {
+    display: inline-flex;
+    justify-content: center;
+    margin: 12px 0 0;
+  }
+
+  .navpill__links {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 4px 18px 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    border: 1px solid var(--nav-edge);
+    border-radius: 26px;
+    background: var(--nav-bg);
+    box-shadow: 0 24px 50px -28px rgba(10, 14, 20, 0.85);
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
+  }
+
+  .navpill[data-open='true'] .navpill__links {
+    max-height: 400px;
+    padding: 8px 18px 18px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navpill__link {
+    padding: 14px 2px;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(241, 239, 233, 0.12);
+  }
+
+  .navpill__link::after {
+    display: none;
+  }
+
+  .navpill[data-open='true'] .navpill__toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .navpill[data-open='true'] .navpill__toggle span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navpill[data-open='true'] .navpill__toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 /* -- hero ----------------------------------------------------------------- */
@@ -539,20 +923,11 @@ a {
   mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
 }
 
+/* No animation: the rows are positioned by scroll and cursor, in JS. */
 .runner__track {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: cf-run 46s linear infinite;
-}
-
-.runner__track--reverse {
-  animation-duration: 52s;
-  animation-direction: reverse;
-}
-
-.runner:hover .runner__track {
-  animation-play-state: paused;
 }
 
 .runner__group {
@@ -567,7 +942,32 @@ a {
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 16px;
+  background: var(--card);
   text-decoration: none;
+}
+
+.runner__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.6s ease;
+}
+
+.runner__card:hover .runner__image {
+  transform: scale(1.05);
+}
+
+/* The caption is dark ink sitting on the artwork, and the shots run from near
+   white to near black — this keeps it legible on either. */
+.runner__card::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  height: 46%;
+  background: linear-gradient(to top, var(--paper) 22%, transparent);
+  pointer-events: none;
 }
 
 .runner__caption {
@@ -756,6 +1156,27 @@ a {
   border-radius: 14px;
 }
 
+.service-row__shot {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  /* A hairline edge so light screenshots do not bleed into the dark panel. */
+  border: 1px solid rgba(241, 239, 233, 0.16);
+  background: rgba(241, 239, 233, 0.06);
+}
+
+.service-row__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.6s ease;
+}
+
+.service-row__shot:hover img {
+  transform: scale(1.05);
+}
+
 .services__cta {
   margin-top: 28px;
 }
@@ -767,9 +1188,15 @@ a {
   padding: clamp(40px, 7vh, 90px) var(--section-x) 30px;
 }
 
+/* The block that gets pinned while its copy reveals: the gap below the head
+   lives here as padding so it is inside the height ScrollTrigger measures. */
+.projects__lede {
+  position: relative;
+  padding-bottom: clamp(32px, 5vw, 56px);
+}
+
 .projects__head {
   max-width: 820px;
-  margin-bottom: clamp(32px, 5vw, 56px);
 }
 
 .projects__title {
@@ -784,10 +1211,12 @@ a {
   color: color-mix(in srgb, var(--ink) 62%, transparent);
 }
 
+/* Offsets are measured back out to the section edges, which is what this was
+   anchored to before the lede wrapper became its containing block. */
 .projects__mark {
   position: absolute;
-  top: clamp(30px, 5vw, 64px);
-  right: clamp(8px, 3vw, 40px);
+  top: calc(clamp(30px, 5vw, 64px) - clamp(40px, 7vh, 90px));
+  right: calc(clamp(8px, 3vw, 40px) - var(--section-x));
   opacity: 0.9;
 }
 
@@ -798,6 +1227,7 @@ a {
 }
 
 .project-card {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -813,6 +1243,84 @@ a {
 .project-card__media-inner {
   position: absolute;
   inset: -6% 0;
+}
+
+.project-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* "View project" cue — hidden until the card is hovered or its link focused. */
+.project-card__cue {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 9px 16px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.project-card__cue-arrow {
+  transition: transform 0.35s ease;
+}
+
+.project-card:hover .project-card__cue,
+.project-card:focus-within .project-card__cue {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-card:hover .project-card__cue-arrow {
+  transform: translateX(3px);
+}
+
+/* Stretched so the whole card is one hit target, while the accessible name
+   stays on the project title itself. */
+.project-card__link {
+  text-decoration: none;
+}
+
+.project-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-media);
+}
+
+.project-card__link:focus-visible {
+  outline: none;
+}
+
+.project-card__link:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.project-card__name .project-card__link {
+  transition: color 0.25s ease;
+}
+
+.project-card:hover .project-card__name {
+  color: var(--accent-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card__cue,
+  .project-card__cue-arrow {
+    transition: none;
+  }
 }
 
 .project-card__type {
@@ -855,6 +1363,297 @@ a {
   list-style: none;
 }
 
+/* -- pills that fall ------------------------------------------------------ */
+
+/* Until the simulation takes over this is an ordinary wrapped row, which is
+   also what it stays as under reduced motion. */
+.pills-drop--live {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.pills-drop--live > .pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Solid, or blocks resting on each other would read as a tangle of outlines. */
+  background: var(--paper);
+  cursor: grab;
+  user-select: none;
+  will-change: transform;
+}
+
+.pills-drop--live > .pill:active {
+  cursor: grabbing;
+}
+
+/* -- project detail page -------------------------------------------------- */
+
+.project-page {
+  padding: clamp(96px, 13vh, 150px) var(--section-x) 40px;
+}
+
+.project-page--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  min-height: 46vh;
+}
+
+.project-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: clamp(24px, 4vw, 44px);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+  transition: color 0.25s ease;
+}
+
+.project-page__back:hover {
+  color: var(--accent);
+}
+
+.project-page__head {
+  max-width: 900px;
+}
+
+.project-page__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-2);
+}
+
+.project-page__title {
+  margin: 18px 0 0;
+  font-family: var(--serif);
+  font-size: clamp(38px, 6.6vw, 82px);
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+
+.project-page__summary {
+  max-width: 720px;
+  margin: 22px 0 0;
+  font-size: clamp(16px, 1.7vw, 20px);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--ink) 68%, transparent);
+}
+
+.project-page__meta {
+  margin-top: 28px;
+}
+
+.project-page__visit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  padding-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.project-page__visit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.project-page__visit-host {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+.project-page__shot {
+  margin: clamp(36px, 5.5vw, 68px) 0 0;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: var(--card);
+}
+
+.project-page__shot img {
+  width: 100%;
+  height: auto;
+}
+
+.project-page__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 78px);
+  margin-top: clamp(40px, 6vw, 80px);
+}
+
+.project-page__section + .project-page__section {
+  margin-top: clamp(30px, 4vw, 48px);
+}
+
+.project-page__section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+.project-page__paragraph {
+  margin-top: 16px;
+  max-width: 62ch;
+  font-size: clamp(15px, 1.35vw, 17px);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+/* Rides down with the reader while the prose column scrolls past. Needs the
+   `overflow-x: clip` on body to work — see the note there. */
+.project-page__aside {
+  position: sticky;
+  top: calc(var(--nav-pad-y) + var(--nav-h) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-self: start;
+}
+
+.project-page__panel {
+  border-radius: var(--radius-card);
+  padding: clamp(20px, 2.4vw, 28px);
+  background: var(--card);
+}
+
+.project-page__panel-title {
+  margin-bottom: 16px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 52%, transparent);
+}
+
+.project-page__delivered {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-page__highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-page__highlights li {
+  display: grid;
+  grid-template-columns: 13px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  font-size: 14px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+.project-page__highlights svg {
+  margin-top: 6px;
+}
+
+.project-page__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: clamp(48px, 7vw, 96px);
+  border-radius: var(--radius-panel);
+  padding: clamp(28px, 4vw, 48px);
+  background: var(--dark);
+  color: var(--on-dark);
+}
+
+.project-page__cta-heading {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.8vw, 34px);
+}
+
+.project-page__cta-body {
+  max-width: 46ch;
+  margin-top: 12px;
+  font-size: 14.5px;
+  color: rgba(241, 239, 233, 0.65);
+}
+
+.project-page__cta .btn--primary {
+  background: var(--on-dark);
+  color: var(--on-light);
+}
+
+.project-page__cta .btn--primary:hover {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+.project-page__next {
+  display: block;
+  margin-top: clamp(28px, 4vw, 44px);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  padding-top: clamp(22px, 3vw, 34px);
+  text-decoration: none;
+}
+
+.project-page__next-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+.project-page__next-name {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-size: clamp(26px, 3.4vw, 44px);
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  transition: color 0.25s ease;
+}
+
+.project-page__next:hover .project-page__next-name {
+  color: var(--accent-2);
+}
+
+.project-page__next-type {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+@media (max-width: 900px) {
+  .project-page__body {
+    grid-template-columns: 1fr;
+  }
+
+  /* One column: the panels sit under the prose, so there is nothing to ride
+     alongside and sticking them would just park them over the next section. */
+  .project-page__aside {
+    position: static;
+  }
+}
+
 /* -- why clearfield ------------------------------------------------------- */
 
 .why__head {
@@ -876,56 +1675,177 @@ a {
   color: color-mix(in srgb, var(--ink) 62%, transparent);
 }
 
-.why__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+.why__cards {
+  display: flex;
+  align-items: stretch;
   gap: 14px;
 }
 
-.why-card__chart {
+.why-card {
   position: relative;
-  height: 120px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(300px, 46vh, 430px);
   overflow: hidden;
-  border-radius: 16px 16px 0 0;
-  background: var(--card);
-}
-
-.why-card__bar {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  height: 30px;
-  border-radius: 6px;
+  /* isolate: keeps the ::after colour wash behind the text but above the
+     card's own background. */
+  isolation: isolate;
+  border-radius: 26px;
   background: var(--dark);
+  color: var(--on-dark);
+  transition: flex-grow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
 }
 
-.why-card__bar--accent {
-  background: var(--accent-2);
+/* The colour, faded in on open. */
+.why-card::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--tone) 82%, #ffffff),
+    var(--tone) 62%,
+    color-mix(in srgb, var(--tone) 78%, var(--darker))
+  );
+  transition: opacity 0.5s ease;
 }
 
 .why-card__number {
   position: absolute;
-  right: 18px;
-  bottom: 14px;
-  font-size: 12px;
-  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  top: 20px;
+  left: 0;
+  right: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-align: center;
+  color: rgba(241, 239, 233, 0.45);
+  transition: opacity 0.35s ease, color 0.45s ease;
+}
+
+.why-card__spine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  width: max-content;
+  max-height: calc(100% - 70px);
+  margin: 0 auto;
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
 }
 
 .why-card__body {
-  padding: 20px 18px 24px;
-  border-radius: 0 0 16px 16px;
-  background: var(--card-deep);
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 26px;
+  /* Laid out at open width even while closed, so nothing reflows mid-open. */
+  min-width: 240px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .why-card__title {
-  font-size: 19px;
+  font-size: clamp(20px, 1.7vw, 25px);
 }
 
 .why-card__text {
   margin: 10px 0 0;
+  max-width: 42ch;
   font-size: 13.5px;
   line-height: 1.6;
-  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  color: rgba(241, 239, 233, 0.78);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Everything gives way as soon as the group is touched… */
+  .why__cards:hover .why-card,
+  .why__cards:focus-within .why-card {
+    flex-grow: 0.62;
+  }
+
+  /* …and the live card takes the room back. Listed after the rule above, at
+     equal specificity, so it wins. */
+  .why__cards .why-card:hover,
+  .why__cards .why-card:focus-visible {
+    flex-grow: 2.5;
+    box-shadow: 0 28px 60px -30px rgba(10, 14, 20, 0.65);
+  }
+
+  .why-card:hover::after,
+  .why-card:focus-visible::after {
+    opacity: 1;
+  }
+
+  .why-card:hover .why-card__spine,
+  .why-card:focus-visible .why-card__spine,
+  .why-card:hover .why-card__number,
+  .why-card:focus-visible .why-card__number {
+    opacity: 0;
+  }
+
+  .why-card:hover .why-card__body,
+  .why-card:focus-visible .why-card__body {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.14s;
+  }
+}
+
+/* Without hover there is nothing to open, so the cards stack open. */
+@media (hover: none), (max-width: 820px) {
+  .why__cards {
+    flex-direction: column;
+  }
+
+  .why-card {
+    height: auto;
+    min-height: 190px;
+    padding: 24px 26px;
+  }
+
+  .why-card::after {
+    opacity: 1;
+  }
+
+  .why-card__number {
+    position: static;
+    text-align: left;
+    color: rgba(241, 239, 233, 0.6);
+  }
+
+  .why-card__spine {
+    display: none;
+  }
+
+  .why-card__body {
+    position: static;
+    min-width: 0;
+    margin-top: 14px;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-card,
+  .why-card::after,
+  .why-card__body,
+  .why-card__spine,
+  .why-card__number {
+    transition: none;
+  }
 }
 
 /* -- client marquee ------------------------------------------------------- */
@@ -944,12 +1864,36 @@ a {
   animation: cf-marquee 38s linear infinite;
 }
 
-.marquee__group {
+.marquee__group,
+.marquee__set {
   display: flex;
+  align-items: center;
   gap: 72px;
+}
+
+/* Every mark is flattened to a single ink silhouette. It is what makes a row of
+   unrelated brands read as one set, and it is the only way the logos that ship
+   white on transparent survive the light theme: brightness(0) drops the colour
+   and leaves the alpha, so the shape is all that is left to see. */
+.marquee__logo {
+  flex: none;
+  height: var(--logo-h);
+  width: auto;
+  filter: brightness(0);
+  opacity: 0.45;
+}
+
+:root[data-theme='dark'] .marquee__logo {
+  filter: brightness(0) invert(1);
+}
+
+/* Fallback for a client with no published mark. */
+.marquee__wordmark {
+  flex: none;
   white-space: nowrap;
   font-size: 17px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: color-mix(in srgb, var(--ink) 45%, transparent);
 }
 
@@ -1145,15 +2089,6 @@ a {
   }
 }
 
-@keyframes cf-run {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes cf-blink {
   0%,
   49% {
@@ -1222,67 +2157,6 @@ a {
 }
 
 @media (max-width: 600px) {
-  .nav {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .nav__toggle {
-    display: flex;
-  }
-
-  .nav__cta {
-    display: none;
-  }
-
-  .nav__dot {
-    display: none;
-  }
-
-  .nav__links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    max-height: 0;
-    padding: 8px 20px 18px;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    background: var(--paper);
-    border-radius: 0 0 18px 18px;
-    box-shadow: 0 20px 40px -20px rgba(16, 23, 30, 0.35);
-    transition: max-height 0.4s ease, opacity 0.3s ease;
-  }
-
-  .nav[data-open='true'] .nav__links {
-    max-height: 420px;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .nav__links a {
-    padding: 14px 4px;
-    font-size: 16px;
-    border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
-  }
-
-  .nav[data-open='true'] .nav__toggle span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .nav[data-open='true'] .nav__toggle span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .nav[data-open='true'] .nav__toggle span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-
   .projects__grid {
     grid-template-columns: 1fr;
   }

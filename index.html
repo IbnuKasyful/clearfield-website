@@ -9,7 +9,30 @@
       content="Clearfield helps businesses grow online through website design and development, digital marketing, and ongoing website support."
     />
     <meta name="theme-color" content="#f2f0ec" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- Resolve the theme before first paint so a dark visitor never sees a
+         flash of the light page. Mirrors resolveTheme() in src/lib/theme.js. -->
+    <script>
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('clearfield-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = theme;
+          if (theme === 'dark') {
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d1015');
+          }
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+    <!-- Absolute: a relative path would resolve against /projects/ on a
+         project detail route and 404. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Clearfield — Digital built for business" />

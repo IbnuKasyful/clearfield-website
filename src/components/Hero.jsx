@@ -8,6 +8,7 @@ import {
   useTypewriter,
 } from '../lib/motion';
 import PixelMark from './PixelMark';
+import SectionLink from './SectionLink';
 import ShowcaseRunner from './ShowcaseRunner';
 
 export default function Hero({ ready }) {
@@ -64,12 +65,12 @@ export default function Hero({ ready }) {
         </p>
 
         <div className="hero__actions" data-hero-fade>
-          <a ref={ctaRef} className="btn btn--primary" href="#contact">
+          <SectionLink ref={ctaRef} className="btn btn--primary" href="#contact">
             {hero.primaryCta}
-          </a>
-          <a className="btn btn--soft" href="#projects">
+          </SectionLink>
+          <SectionLink className="btn btn--soft" href="#projects">
             {hero.secondaryCta}
-          </a>
+          </SectionLink>
         </div>
 
         <div className="hero__capabilities" data-hero-fade>

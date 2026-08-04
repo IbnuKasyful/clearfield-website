@@ -67,9 +67,11 @@ export const services = {
       lead: 'Create a professional online presence that builds trust from the first visit.',
       body: 'Your website is often the first place people learn about your business. We design and develop websites that are fast, secure, easy to update, and built to help you connect with your customers.',
       tags: ['Website strategy', 'UX & UI design', 'Website development', 'Content implementation', 'Performance optimisation'],
+      // Real work, not mockups — `project` points at an entry in `projects.items`
+      // and the 4:3 screenshot in public/projects/<id>-4x3.webp.
       media: [
-        { label: 'Website mockup', ratio: '4 / 3' },
-        { label: 'UI detail', ratio: '4 / 3' },
+        { project: 'atty-partners', label: 'Atty & Partners corporate website' },
+        { project: 'northvale', label: 'Northvale accounting website' },
       ],
     },
     {
@@ -93,17 +95,36 @@ export const services = {
   ],
 };
 
+/**
+ * Featured work.
+ *
+ * Each item doubles as the card in the grid and the source for its own detail
+ * page at /projects/<id>. Imagery in `public/projects/` is a screenshot of the
+ * live site — `<id>-card.webp` is the 4:3.2 crop the grid frame expects,
+ * `<id>.webp` is the wider shot the detail page hero uses.
+ *
+ * `logo` is the mark the client actually runs on that live site, trimmed to its
+ * own bounds so nothing but the artwork is left. The marquee flattens it to a
+ * silhouette, so only the alpha channel matters. `height` is the rendered pixel
+ * height, tuned per lockup rather than shared, because a stacked mark and a
+ * single-line wordmark do not read at the same size. A project with no `logo`
+ * has no mark of its own published and falls back to a wordmark.
+ */
 export const projects = {
   index: '( 03 )',
   kicker: 'Featured projects',
   heading:
     'Every business has different goals. Some need a professional corporate website. Others need an event platform, a registration system, or digital tools that support day-to-day operations.',
   intro: "Here are a few examples of projects we've delivered.",
+  cardCta: 'View project',
   items: [
     {
       id: 'atty-partners',
       name: 'Atty & Partners',
       type: 'Corporate Website',
+      url: 'https://atty.ae/',
+      urlLabel: 'atty.ae',
+      logo: { src: '/logos/atty-partners.png', height: 46 },
       description:
         'Designed and developed a professional corporate website for an international business advisory firm, focused on communicating complex services with clarity, building credibility, and creating a seamless user experience for businesses expanding into the Middle East.',
       delivered: [
@@ -113,11 +134,40 @@ export const projects = {
         'Content Implementation',
         'Performance Optimisation',
       ],
+      detail: {
+        summary:
+          'A credibility-first corporate site for an advisory firm whose clients value discretion, regional insight, and practical execution.',
+        sections: [
+          {
+            title: 'The brief',
+            body: [
+              'Atty & Partners advises international companies, family offices, and growth-stage businesses establishing or expanding their presence in the GCC. Work of that kind is bought on trust long before it is bought on price, so the website had to carry the weight of the firm rather than simply list what it does.',
+              'The challenge was clarity. Market entry, strategic partnerships, licensing, structuring, and regional representation are layered services with real overlap. Presented carelessly they read as an undifferentiated block of consultancy language.',
+            ],
+          },
+          {
+            title: 'What we built',
+            body: [
+              'We structured the site around how prospective clients actually arrive: they want to understand the firm, understand whether their situation fits, and then make contact. Expertise is separated into distinct areas, an About section establishes standing, and a dedicated Our Clients section names the kinds of organisations the firm works with.',
+              'A resources layer — case studies, articles, and market insights — gives the firm somewhere to demonstrate regional knowledge rather than assert it. The visual language stays restrained: a deep editorial palette, a serif display face for headlines, and photography that grounds the firm in the region it operates in.',
+            ],
+          },
+        ],
+        highlights: [
+          'Expertise architecture that separates overlapping advisory services',
+          'Resources hub for case studies, articles, and market insight',
+          'Editorial design language built for credibility over decoration',
+          'Direct enquiry routes, including WhatsApp, on every page',
+        ],
+      },
     },
     {
       id: 'northvale',
       name: 'Northvale',
       type: 'Brand & Website Launch',
+      url: 'https://www.northvale-accounting.ae/',
+      urlLabel: 'northvale-accounting.ae',
+      logo: { src: '/logos/northvale.png', height: 24 },
       description:
         'Developed the digital presence for a newly established accounting firm, creating a professional website that reflects trust, simplicity, and financial expertise while supporting the launch of a new business.',
       delivered: [
@@ -126,11 +176,40 @@ export const projects = {
         'Brand Implementation',
         'Content Integration',
       ],
+      detail: {
+        summary:
+          'The launch presence for a new UAE accounting firm, built to convert regulatory pressure into booked consultations.',
+        sections: [
+          {
+            title: 'The brief',
+            body: [
+              'Northvale launched into a market with a clear and urgent trigger: the introduction of UAE Corporate Tax in 2023 left businesses facing new tax, accounting, and reporting obligations many were not set up for. The firm needed a digital presence from a standing start — no existing traffic, no established brand recognition, no reputation to trade on.',
+              'For a new practice, the website is the credibility test. It had to look like the work of an established firm on day one while making it obvious what Northvale does and how to start a conversation.',
+            ],
+          },
+          {
+            title: 'What we built',
+            body: [
+              'We led with the trigger rather than the firm. The homepage opens on UAE Corporate Tax, VAT, and accounting compliance — the problem visitors are searching for — and only then explains how Northvale addresses it through structured accounting, VAT compliance, financial reporting, and corporate tax support.',
+              'The consultation form sits in the hero rather than at the end of a scroll, capturing name, email, country, and the specific service required so enquiries arrive qualified. Service pillars are broken out as distinct routes into the site, and direct phone and WhatsApp contact run alongside the form for visitors who would rather just call.',
+            ],
+          },
+        ],
+        highlights: [
+          'Lead capture placed in the hero, qualified by service and country',
+          'Positioning anchored to the 2023 UAE Corporate Tax trigger',
+          'Brand implementation delivered alongside the build',
+          'Phone and WhatsApp contact routes running parallel to the form',
+        ],
+      },
     },
     {
       id: 'dubai-unfiltered',
       name: 'Dubai Unfiltered',
       type: 'Event Platform',
+      url: 'https://dubaiongefilterd.nl/',
+      urlLabel: 'dubaiongefilterd.nl',
+      logo: { src: '/logos/dubai-unfiltered.png', height: 42 },
       description:
         'Designed and developed a dedicated event platform to support registrations, attendee management, CRM integration, automated communications, and post-event engagement for a business networking event.',
       delivered: [
@@ -140,11 +219,39 @@ export const projects = {
         'Email Automation',
         'Event Management Workflow',
       ],
+      detail: {
+        summary:
+          'A single-purpose event platform that takes a visitor from landing page to paid, confirmed seat without leaving the site.',
+        sections: [
+          {
+            title: 'The brief',
+            body: [
+              'Dubai Ongefilterd is an evening event for entrepreneurs, investors, and professionals looking at opportunities in Dubai and the wider region — pitched, as the name promises, as the honest version of the story. It runs to a fixed date, a fixed venue, and a limited number of seats.',
+              'Events like this fail on logistics rather than interest. Registration, payment, confirmation, and the run-up communication all have to work without manual chasing, and the whole funnel has to hold up during the short window when attention is highest.',
+            ],
+          },
+          {
+            title: 'What we built',
+            body: [
+              'The platform is deliberately narrow. One page, one decision: the date, venue, and time are visible immediately, the proposition is stated in a line, and reserving a seat is never more than one click away — from the fixed header or from the page itself.',
+              'Payment is handled on-site through Stripe with Apple Pay, Google Pay, and card accepted, so no one is bounced to a third-party ticketing host mid-decision. Behind the form, registrations flow into CRM and trigger automated confirmation and reminder sequences, giving the organisers an attendee list that stays current without manual entry.',
+            ],
+          },
+        ],
+        highlights: [
+          'Single-decision landing page built around one conversion',
+          'On-site Stripe checkout — Apple Pay, Google Pay, and card',
+          'Registrations synced to CRM with no manual entry',
+          'Automated confirmation and reminder sequences',
+        ],
+      },
     },
     {
       id: 'handelsmissie-dubai',
       name: 'Handelsmissie Dubai',
       type: 'Trade Mission Platform',
+      url: 'https://www.handelsmissiedubai.nl/',
+      urlLabel: 'handelsmissiedubai.nl',
       description:
         'Built a dedicated platform to support a business trade mission, integrating participant registration, CRM workflows, ticketing, automated communications, and operational processes into a single digital experience.',
       delivered: [
@@ -154,8 +261,53 @@ export const projects = {
         'Marketing Automation',
         'Business Workflow Integration',
       ],
+      detail: {
+        summary:
+          'A high-consideration platform selling ten places on a four-day trade mission, where the decision needs evidence before it needs a checkout.',
+        sections: [
+          {
+            title: 'The brief',
+            body: [
+              'A four-day trade mission to Dubai and the Gulf region, sold to Dutch business owners weighing expansion into the Middle East. Ten places, a fixed departure date, and a price point that puts it firmly in considered-purchase territory.',
+              'That changes the job of the site. Nobody commits to a mission of this size on impulse, so the platform had to answer the obvious objections — who else is going, what actually happens on each day, what do I get for the fee — while still creating real urgency around a genuinely limited number of seats.',
+            ],
+          },
+          {
+            title: 'What we built',
+            body: [
+              'Scarcity and timing are made explicit and honest: a live countdown to departure, the seat count stated plainly, and a time-limited reduced rate surfaced to visitors who have not yet booked. None of it is invented — the constraints are real, so the site simply stops hiding them.',
+              'The evidence sits directly underneath. Participant testimonials from previous missions run near the top of the page, followed by a full day-by-day programme and an FAQ that handles the practical questions before they become emails. Registration and ticketing run through the site into CRM, with automated communications carrying participants from booking through to departure.',
+            ],
+          },
+        ],
+        highlights: [
+          'Live countdown and honest seat-availability signalling',
+          'Named participant testimonials from previous missions',
+          'Day-by-day programme and FAQ that pre-empt enquiries',
+          'Registration, ticketing, and CRM joined into one workflow',
+        ],
+      },
     },
   ],
+};
+
+/** Lookup used by the project detail route. */
+export const projectById = (id) => projects.items.find((item) => item.id === id);
+
+export const projectDetail = {
+  backLabel: 'All projects',
+  visitLabel: 'Visit live site',
+  deliveredLabel: 'What we delivered',
+  highlightsLabel: 'Highlights',
+  nextLabel: 'Next project',
+  ctaHeading: 'Have a project like this in mind?',
+  ctaBody:
+    "Tell us what you're planning and we'll come back with a clear view of what it takes to build it.",
+  ctaLabel: 'Talk to Our Team',
+  notFound: {
+    heading: 'Project not found',
+    body: 'That project does not exist, or the link has changed.',
+  },
 };
 
 export const why = {
@@ -164,31 +316,31 @@ export const why = {
   heading: 'Why businesses work with Clearfield',
   intro:
     'We combine business understanding with digital expertise, and we stay involved long after launch.',
+  // `tone` is the colour a card washes in with once it opens.
   items: [
     {
       number: '01',
       title: 'Business-first thinking',
       body: 'We understand commercial objectives before recommending digital solutions.',
-      fill: 25,
+      tone: '#1e4f9e',
     },
     {
       number: '02',
       title: 'Part of Atty Group',
       body: 'Backed by a wider business ecosystem with expertise beyond digital.',
-      fill: 50,
+      tone: '#17407f',
     },
     {
       number: '03',
       title: 'Long-term partnership',
       body: 'We continue supporting your website and digital presence after launch.',
-      fill: 75,
+      tone: '#2a5fb0',
     },
     {
       number: '04',
       title: 'Practical solutions',
       body: 'Clear advice, reliable delivery, and websites that are easy to manage.',
-      fill: 92,
-      accent: true,
+      tone: '#f4590c',
     },
   ],
 };

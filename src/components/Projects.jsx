@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { projects } from '../data/site';
-import { gsap, ScrollTrigger, prefersReducedMotion } from '../lib/motion';
+import { gsap, ScrollTrigger, prefersReducedMotion, usePinnedWordReveal } from '../lib/motion';
+import PhysicsPills from './PhysicsPills';
 import PixelMark from './PixelMark';
-import Placeholder from './Placeholder';
 import Reveal from './Reveal';
+import SplitWords from './SplitWords';
 
 export default function Projects() {
   const gridRef = useRef(null);
+  const ledeRef = usePinnedWordReveal({ words: '.projects__word' });
 
   useEffect(() => {
     const grid = gridRef.current;
@@ -60,19 +63,22 @@ export default function Projects() {
 
   return (
     <section className="projects" id="projects">
-      <div className="projects__head">
-        <Reveal as="span" className="eyebrow">
-          {projects.index}&nbsp;&nbsp;{projects.kicker}
-        </Reveal>
-        <Reveal as="h2" className="projects__title">
-          {projects.heading}
-        </Reveal>
-        <Reveal as="p" className="projects__intro">
-          {projects.intro}
-        </Reveal>
-      </div>
+      {/* Head and mark travel together so the pin takes the whole lede. */}
+      <div className="projects__lede" ref={ledeRef}>
+        <div className="projects__head">
+          <Reveal as="span" className="eyebrow">
+            {projects.index}&nbsp;&nbsp;{projects.kicker}
+          </Reveal>
+          <h2 className="projects__title">
+            <SplitWords text={projects.heading} className="projects__word" />
+          </h2>
+          <p className="projects__intro">
+            <SplitWords text={projects.intro} className="projects__word" />
+          </p>
+        </div>
 
-      <PixelMark width={70} height={50} className="projects__mark" />
+        <PixelMark width={70} height={50} className="projects__mark" />
+      </div>
 
       <div className="projects__grid" ref={gridRef}>
         {projects.items.map((project) => (
@@ -84,20 +90,33 @@ export default function Projects() {
           >
             <div className="project-card__media">
               <div className="project-card__media-inner">
-                <Placeholder label={`${project.name} — ${project.type}`} />
+                <img
+                  className="project-card__image"
+                  src={`/projects/${project.id}-card.webp`}
+                  alt={`The ${project.name} website`}
+                  width={1200}
+                  height={1075}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
+              <span className="project-card__cue" aria-hidden="true">
+                {projects.cardCta}
+                <span className="project-card__cue-arrow">→</span>
+              </span>
             </div>
             <p className="project-card__type">{project.type}</p>
-            <h3 className="project-card__name">{project.name}</h3>
+            {/* The whole card is clickable — the overlay below stretches this
+                link across it, so nothing else needs to be interactive. */}
+            <h3 className="project-card__name">
+              <Link className="project-card__link" to={`/projects/${project.id}`}>
+                {project.name}
+                <span className="visually-hidden"> — {project.type}, view project</span>
+              </Link>
+            </h3>
             <p className="project-card__description">{project.description}</p>
             <p className="project-card__delivered-label">Delivered</p>
-            <ul className="project-card__delivered">
-              {project.delivered.map((item) => (
-                <li className="pill" key={item}>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <PhysicsPills className="project-card__delivered" items={project.delivered} />
           </article>
         ))}
       </div>

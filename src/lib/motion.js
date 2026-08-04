@@ -4,6 +4,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// The webfonts load with display: swap, so text reflows after the triggers have
+// already measured the page. Anything pinned would then engage at the wrong
+// scroll position — remeasure once the real faces are in.
+if (typeof document !== 'undefined' && document.fonts) {
+  document.fonts.ready.then(() => ScrollTrigger.refresh());
+}
+
 export { gsap, ScrollTrigger };
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
@@ -55,6 +62,64 @@ export function useReveal({ y = 34, duration = 1, delay = 0, start = 'top 88%' }
 
     return () => ctx.revert();
   }, [y, duration, delay, start]);
+
+  return ref;
+}
+
+/**
+ * Lights a block of copy up word by word, tied to the scrollbar, and pins the
+ * page while it happens — so the reader cannot reach the next section until the
+ * last word has landed. Returns the ref for the block that gets pinned.
+ *
+ * `words` is a selector for the per-word spans inside that block; SplitWords
+ * produces them.
+ */
+export function usePinnedWordReveal({
+  words,
+  dim = 0.14,
+  // Where the block parks while it is held, as a fraction of the viewport.
+  offset = 0.18,
+  // Viewport-heights of scroll spent on the reveal, and the beat afterwards
+  // with every word already lit (in timeline units).
+  distance = 1.2,
+  hold = 6,
+} = {}) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return undefined;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          // Park it below the header, but never so low that a short screen cuts
+          // the tail of the copy off. Re-measured on every refresh.
+          start: () => {
+            const room = Math.max(0, window.innerHeight - el.offsetHeight);
+            return `top ${Math.round(Math.min(window.innerHeight * offset, room / 2))}px`;
+          },
+          end: () => `+=${window.innerHeight * distance}`,
+          // No width or height gate: the hold is the point of the section, so it
+          // applies on every screen that has not asked for reduced motion.
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          // Tight scrub: a long lag would let the release outrun the words.
+          scrub: 0.25,
+        },
+      });
+
+      tl.fromTo(words, { opacity: dim }, { opacity: 1, ease: 'none', duration: 0.5, stagger: 0.6 });
+      // Without the beat the release lands on the same frame as the last word,
+      // and the copy reads as cut off rather than finished.
+      if (hold) tl.to({}, { duration: hold });
+    }, el);
+
+    return () => ctx.revert();
+  }, [words, dim, offset, distance, hold]);
 
   return ref;
 }

@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { services } from '../data/site';
 import { gsap, prefersReducedMotion, useMagnetic } from '../lib/motion';
-import Placeholder from './Placeholder';
 import Reveal from './Reveal';
+import SectionLink from './SectionLink';
 
 export default function Services() {
   const [openId, setOpenId] = useState(services.items[0].id);
@@ -140,9 +141,24 @@ export default function Services() {
                     </div>
                   </div>
                   {item.media.length > 0 && (
+                    // Collapsed rows are marked inert, so these links leave the
+                    // tab order along with the rest of the panel.
                     <div className="service-row__media">
                       {item.media.map((media) => (
-                        <Placeholder key={media.label} label={media.label} onDark />
+                        <Link
+                          className="service-row__shot"
+                          to={`/projects/${media.project}`}
+                          key={media.project}
+                        >
+                          <img
+                            src={`/projects/${media.project}-4x3.webp`}
+                            alt={media.label}
+                            width={1000}
+                            height={750}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </Link>
                       ))}
                     </div>
                   )}
@@ -152,9 +168,9 @@ export default function Services() {
           );
         })}
 
-        <a ref={ctaRef} className="btn btn--light services__cta" href="#contact">
+        <SectionLink ref={ctaRef} className="btn btn--light services__cta" href="#contact">
           {services.cta}&nbsp;↗
-        </a>
+        </SectionLink>
       </div>
     </section>
   );

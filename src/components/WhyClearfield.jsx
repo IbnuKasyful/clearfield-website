@@ -1,28 +1,7 @@
-import { useEffect, useRef } from 'react';
 import { why } from '../data/site';
-import { gsap, prefersReducedMotion } from '../lib/motion';
 import Reveal from './Reveal';
 
 export default function WhyClearfield() {
-  const gridRef = useRef(null);
-
-  useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid || prefersReducedMotion()) return undefined;
-
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray('.why-card__bar').forEach((bar) => {
-        gsap.from(bar, {
-          width: 0,
-          duration: 1.1,
-          ease: 'power4.out',
-          scrollTrigger: { trigger: bar, start: 'top 88%', once: true },
-        });
-      });
-    }, grid);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section className="section why" id="why">
@@ -38,23 +17,29 @@ export default function WhyClearfield() {
         </Reveal>
       </div>
 
-      <div className="why__grid" ref={gridRef}>
+      {/* Closed cards sit side by side and read vertically; the one under the
+          pointer (or keyboard focus) opens and takes colour, the rest give up
+          their width. */}
+      <Reveal className="why__cards">
         {why.items.map((item) => (
-          <Reveal key={item.number}>
-            <div className="why-card__chart">
-              <span
-                className={`why-card__bar${item.accent ? ' why-card__bar--accent' : ''}`}
-                style={{ width: `${item.fill}%` }}
-              />
-              <span className="why-card__number">{item.number}</span>
-            </div>
+          <article
+            key={item.number}
+            className="why-card"
+            style={{ '--tone': item.tone }}
+            tabIndex={0}
+          >
+            <span className="why-card__number">{item.number}</span>
+            {/* The closed-state label — the real heading lives in the body. */}
+            <span className="why-card__spine" aria-hidden="true">
+              {item.title}
+            </span>
             <div className="why-card__body">
               <h3 className="why-card__title">{item.title}</h3>
               <p className="why-card__text">{item.body}</p>
             </div>
-          </Reveal>
+          </article>
         ))}
-      </div>
+      </Reveal>
     </section>
   );
 }

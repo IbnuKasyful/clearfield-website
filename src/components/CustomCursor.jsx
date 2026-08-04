@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap, hasFinePointer, prefersReducedMotion } from '../lib/motion';
 
-const INTERACTIVE = 'a, button, .project-card, .service-row__head';
+const INTERACTIVE = 'a, button, .project-card, .service-row__head, .why-card';
 
 /**
  * Trailing ring and dot that replace the system pointer on fine-pointer

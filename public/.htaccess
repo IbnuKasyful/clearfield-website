@@ -1,0 +1,24 @@
+# SPA fallback for Apache / LiteSpeed (Hostinger).
+# Real files and directories are served as-is; everything else is handed to
+# index.html so /projects/<id> survives a refresh or a direct link.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Hashed build assets are immutable; the HTML entry point must not be cached.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|webp|avif|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
