@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { projects, projectById, projectDetail, whatsappHref } from '../data/site';
 import { useMagnetic } from '../lib/motion';
 import PhysicsPills from '../components/PhysicsPills';
-import PixelMark from '../components/PixelMark';
+import NodeMark from '../components/NodeMark';
 import Reveal from '../components/Reveal';
 
 export default function ProjectDetail() {
@@ -46,7 +46,7 @@ export default function ProjectDetail() {
 
       <header className="project-page__head">
         <Reveal as="p" className="eyebrow project-page__eyebrow">
-          <PixelMark width={16} height={12} />
+          <NodeMark width={18} height={8.8} />
           {project.type}
         </Reveal>
         <Reveal as="h1" className="project-page__title">
@@ -105,7 +105,7 @@ export default function ProjectDetail() {
               <ul className="project-page__highlights">
                 {detail.highlights.map((item) => (
                   <li key={item}>
-                    <PixelMark width={13} height={9} />
+                    <NodeMark width={15} height={7.3} />
                     <span>{item}</span>
                   </li>
                 ))}

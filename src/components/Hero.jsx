@@ -7,7 +7,7 @@ import {
   useReducedMotion,
   useTypewriter,
 } from '../lib/motion';
-import PixelMark from './PixelMark';
+import NodeMark from './NodeMark';
 import SectionLink from './SectionLink';
 import ShowcaseRunner from './ShowcaseRunner';
 
@@ -23,7 +23,8 @@ export default function Hero({ ready }) {
     const ctx = gsap.context(() => {
       gsap
         .timeline({ defaults: { ease: 'power4.out' } })
-        .from('[data-pixel]', { scale: 0, transformOrigin: '50% 50%', duration: 0.55, ease: 'back.out(3)', stagger: 0.1 })
+        .from('[data-node]', { scale: 0, transformOrigin: '50% 50%', duration: 0.55, ease: 'back.out(3)', stagger: 0.1 })
+        .from('[data-node-link]', { strokeDashoffset: 1, duration: 0.5, ease: 'power1.out' }, '<')
         .from('[data-hero-fade]', { opacity: 0, y: 24, duration: 0.9, stagger: 0.08 }, '-=0.3');
     }, rootRef);
 
@@ -34,7 +35,7 @@ export default function Hero({ ready }) {
     <section className="hero" id="top" ref={rootRef} aria-label="Introduction">
       <div className="hero__inner">
         <p className="hero__chip" data-hero-fade>
-          <PixelMark width={18} height={13} animated />
+          <NodeMark width={20} height={9.7} animated />
           {hero.chip}
         </p>
 
@@ -53,7 +54,7 @@ export default function Hero({ ready }) {
                 <span className="hero__typed">{typed}</span>
                 {!reduced && <span className="hero__caret" />}
                 <span className="hero__mark">
-                  <PixelMark width="0.5em" height="0.36em" animated />
+                  <NodeMark width="0.68em" height="0.33em" animated />
                 </span>
               </span>
             </span>
@@ -78,7 +79,7 @@ export default function Hero({ ready }) {
           <div className="hero__capabilities-list">
             {hero.capabilities.map((capability) => (
               <span key={capability}>
-                <PixelMark width={14} height={10} />
+                <NodeMark width={16} height={7.8} />
                 {capability}
               </span>
             ))}

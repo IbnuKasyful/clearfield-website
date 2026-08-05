@@ -23,6 +23,13 @@
   /* The wordmark blue, for the always-white brand badge. Held apart from
      --accent, which lightens in dark mode and would wash out on white. */
   --brand-ink: #1e4f9e;
+  /* The logo's own two oranges — the mark and the dot over the i. Fixed in
+     both themes, because the master artwork uses one set of values on light
+     and dark alike; --accent-2 stays free to shift with the theme. */
+  --brand-orange: #ff6b00;
+  --brand-dot: #fc724f;
+  /* Default tracking for the wordmark; each lockup overrides it. */
+  --wordmark-tracking: 0em;
 
   --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   --serif: 'Source Serif 4', Georgia, serif;
@@ -356,6 +363,53 @@ a {
   }
 }
 
+/* -- brand lockup ---------------------------------------------------------
+   The wordmark carries no size or colour of its own; it takes both from
+   whatever is showing it, so the nav badge, the preloader and the giant
+   footer signature are all the same three rules at three sizes.
+   -------------------------------------------------------------------------- */
+
+.wordmark {
+  /* Without this an fi ligature eats the tittle the dot is sized to cover,
+     and the dot is left hanging over a bare stem. */
+  font-variant-ligatures: none;
+  /* Tracking comes in as a custom property rather than plain letter-spacing,
+     because the dot has to subtract the same value back out — see below. */
+  letter-spacing: var(--wordmark-tracking);
+  white-space: nowrap;
+}
+
+/* inline-block so the preloader can slide it in — transforms do not apply to
+   a plain inline box. */
+.wordmark__text {
+  display: inline-block;
+}
+
+/* Sits over the tittle of the i just before it, a shade wider so no blue edge
+   shows through, and gives back the width it borrowed so the word keeps its
+   natural advance. Two constants are at work: 0.2145em is the i's advance in
+   Source Serif 4 less half the overhang the dot needs to sit centred, and the
+   tracking is subtracted because letter-spacing is added after the i and would
+   otherwise carry the dot off the stem. The vertical-align length is measured
+   from the baseline, the one axis a font swap cannot move. */
+.wordmark__dot {
+  display: inline-block;
+  width: 0.15em;
+  height: 0.15em;
+  margin-left: calc(-0.2145em - var(--wordmark-tracking));
+  margin-right: calc(0.0645em + var(--wordmark-tracking));
+  vertical-align: 0.545em;
+  border-radius: 50%;
+  background: var(--brand-dot);
+}
+
+/* Clears the ascenders rather than sitting on the baseline, as in the master
+   artwork. Same baseline-relative trick as the dot. */
+.wordmark__mark {
+  margin-left: 0.12em;
+  vertical-align: 0.63em;
+}
+
 .preloader {
   position: fixed;
   inset: 0;
@@ -366,14 +420,16 @@ a {
   justify-content: center;
   gap: 24px;
   background: var(--darker);
-  color: var(--paper);
+  /* Not --paper: the curtain stays dark in both themes, so it needs the token
+     that stays light in both rather than the one that flips with the page. */
+  color: var(--on-dark);
 }
 
 .preloader__word {
   font-family: var(--serif);
   font-weight: 600;
   font-size: clamp(34px, 5vw, 58px);
-  letter-spacing: -0.02em;
+  --wordmark-tracking: -0.02em;
 }
 
 .preloader__row {
@@ -494,7 +550,7 @@ a {
   font-family: var(--serif);
   font-weight: 600;
   font-size: 19px;
-  letter-spacing: -0.01em;
+  --wordmark-tracking: -0.01em;
   line-height: 1;
   color: var(--brand-ink);
   white-space: nowrap;
@@ -862,7 +918,8 @@ a {
 .hero__mark {
   display: inline-block;
   margin-left: 0.16em;
-  vertical-align: 0.12em;
+  /* Rides at the ascender line, as it does in the lockup. */
+  vertical-align: 0.42em;
 }
 
 .hero__body {
@@ -1988,14 +2045,12 @@ a {
 }
 
 .footer__mark {
-  display: flex;
-  gap: 0.06em;
   margin: 0;
   font-family: var(--serif);
   font-weight: 600;
   font-size: clamp(56px, 10vw, 150px);
   line-height: 0.95;
-  letter-spacing: -0.03em;
+  --wordmark-tracking: -0.03em;
 }
 
 .footer__grid {

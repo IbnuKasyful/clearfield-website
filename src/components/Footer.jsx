@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { footer, contact, contactSection, emailHref } from '../data/site';
 import { gsap, prefersReducedMotion } from '../lib/motion';
-import PixelMark from './PixelMark';
 import SectionLink from './SectionLink';
+import Wordmark from './Wordmark';
 
 export default function Footer() {
   const markRef = useRef(null);
@@ -12,13 +12,18 @@ export default function Footer() {
     if (!mark || prefersReducedMotion()) return undefined;
 
     const ctx = gsap.context(() => {
-      gsap.from(mark, {
-        yPercent: 40,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
+      const tl = gsap.timeline({
         scrollTrigger: { trigger: mark, start: 'top 94%', once: true },
       });
+
+      tl.from(mark, { yPercent: 40, opacity: 0, duration: 1.2, ease: 'power4.out' })
+        // The mark assembles once the signature has settled.
+        .from('[data-node-link]', { strokeDashoffset: 1, duration: 0.7, ease: 'power1.inOut' }, 0.45)
+        .from(
+          '[data-node]',
+          { scale: 0, transformOrigin: '50% 50%', duration: 0.4, ease: 'back.out(2.6)', stagger: 0.22 },
+          0.45,
+        );
     }, mark);
 
     return () => ctx.revert();
@@ -36,12 +41,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer__top">
         <p className="footer__mark" ref={markRef}>
-          Clearfield
-          <PixelMark
-            width="0.42em"
-            height="0.3em"
-            style={{ marginTop: '0.1em' }}
-          />
+          <Wordmark withMark animated />
         </p>
         <span style={{ paddingTop: 12, fontSize: 15, color: 'rgba(241,239,233,0.6)' }}>
           © {new Date().getFullYear()}

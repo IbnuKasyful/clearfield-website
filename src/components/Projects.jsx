@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { projects } from '../data/site';
 import { gsap, ScrollTrigger, prefersReducedMotion, usePinnedWordReveal } from '../lib/motion';
 import PhysicsPills from './PhysicsPills';
-import PixelMark from './PixelMark';
+import NodeMark from './NodeMark';
 import Reveal from './Reveal';
 import SplitWords from './SplitWords';
 
@@ -77,7 +77,7 @@ export default function Projects() {
           </p>
         </div>
 
-        <PixelMark width={70} height={50} className="projects__mark" />
+        <NodeMark width={72} height={35} className="projects__mark" />
       </div>
 
       <div className="projects__grid" ref={gridRef}>
