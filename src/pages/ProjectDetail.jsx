@@ -12,7 +12,7 @@ export default function ProjectDetail() {
   useHead(
     project
       ? {
-          title: `${project.name} — ${project.type} | Clearfield`,
+          title: `${project.name}, ${project.type} | Clearfield`,
           description: project.description,
           path: `/projects/${project.id}`,
           image: `/projects/${project.id}.webp`,

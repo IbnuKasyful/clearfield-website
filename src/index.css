@@ -754,8 +754,13 @@ a {
   margin-top: 30px;
 }
 
+/* The three service names run wider than the 880px prose column allows, and
+   wrapping them splits "what we do" across two lines with one item stranded.
+   This row is a list rather than prose, so it takes more than the column and
+   keeps all three inline; below roughly 1100px it wraps as before. The -20px
+   leaves room for a scrollbar, which 100vw does not account for. */
 .hero__capabilities {
-  width: 100%;
+  width: min(1060px, calc(100vw - 2 * var(--section-x) - 20px));
   margin-top: 40px;
 }
 
@@ -772,9 +777,9 @@ a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(20px, 4vw, 52px);
+  gap: clamp(20px, 2.6vw, 36px);
   font-weight: 600;
-  font-size: clamp(15px, 1.7vw, 20px);
+  font-size: clamp(15px, 1.5vw, 18px);
   color: var(--ink-subtle);
 }
 
@@ -782,6 +787,9 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  /* A label wraps as a whole or not at all — "Domain, Email &" over "Social
+     Setup" reads as two services rather than one. */
+  white-space: nowrap;
 }
 
 /* -- showcase runner ------------------------------------------------------ */

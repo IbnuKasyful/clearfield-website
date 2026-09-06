@@ -16,9 +16,9 @@
 export const site = {
   origin: 'https://clearfield.ae',
   name: 'Clearfield',
-  title: 'Clearfield — Digital built for business',
+  title: 'Clearfield | Digital built for business',
   description:
-    'Clearfield Digital helps international businesses build or adapt their digital footprint to suit the local market — websites, domains, professional email, visual identity and social setup.',
+    'Clearfield Digital helps international businesses build or adapt their digital footprint to suit the local market: websites, domains, professional email, visual identity and social setup.',
 };
 
 export const contact = {
@@ -223,21 +223,21 @@ export const projects = {
           {
             title: 'The brief',
             body: [
-              'Dubai Ongefilterd is an evening event for entrepreneurs, investors, and professionals looking at opportunities in Dubai and the wider region — pitched, as the name promises, as the honest version of the story. It runs to a fixed date, a fixed venue, and a limited number of seats.',
+              'Dubai Ongefilterd is an evening event for entrepreneurs, investors, and professionals looking at opportunities in Dubai and the wider region. It is pitched, as the name promises, as the honest version of the story. It runs to a fixed date, a fixed venue, and a limited number of seats.',
               'Events like this fail on logistics rather than interest. Registration, payment, confirmation, and the run-up communication all have to work without manual chasing, and the whole funnel has to hold up during the short window when attention is highest.',
             ],
           },
           {
             title: 'What we built',
             body: [
-              'The platform is deliberately narrow. One page, one decision: the date, venue, and time are visible immediately, the proposition is stated in a line, and reserving a seat is never more than one click away — from the fixed header or from the page itself.',
+              'The platform is deliberately narrow. One page, one decision: the date, venue, and time are visible immediately, the proposition is stated in a line, and reserving a seat is never more than one click away, either from the fixed header or from the page itself.',
               'Payment is handled on-site through Stripe with Apple Pay, Google Pay, and card accepted, so no one is bounced to a third-party ticketing host mid-decision. Behind the form, registrations flow into CRM and trigger automated confirmation and reminder sequences, giving the organisers an attendee list that stays current without manual entry.',
             ],
           },
         ],
         highlights: [
           'Single-decision landing page built around one conversion',
-          'On-site Stripe checkout — Apple Pay, Google Pay, and card',
+          'On-site Stripe checkout with Apple Pay, Google Pay, and card',
           'Registrations synced to CRM with no manual entry',
           'Automated confirmation and reminder sequences',
         ],
@@ -282,7 +282,7 @@ export const projects = {
             title: 'What we built',
             body: [
               'Every route through the page ends in the same place. "Get Your Quote Now" sits in the hero, "Get Quote" is pinned in the header, and the phone number runs live beside it for anyone who would rather call than type.',
-              'The three service lines are broken out as their own destinations rather than bullet points, and a three-step explainer — free quote, book, clean — sets expectations before the enquiry instead of after it. The navy and gold identity we built for the brand holds its own against the bright blues the sector defaults to.',
+              'The three service lines are broken out as their own destinations rather than bullet points, and a three-step explainer (free quote, book, clean) sets expectations before the enquiry instead of after it. The navy and gold identity we built for the brand holds its own against the bright blues the sector defaults to.',
             ],
           },
         ],
@@ -319,14 +319,14 @@ export const projects = {
           {
             title: 'The brief',
             body: [
-              'Northvale launched into a market with a clear and urgent trigger: the introduction of UAE Corporate Tax in 2023 left businesses facing new tax, accounting, and reporting obligations many were not set up for. The firm needed a digital presence from a standing start — no existing traffic, no established brand recognition, no reputation to trade on.',
+              'Northvale launched into a market with a clear and urgent trigger: the introduction of UAE Corporate Tax in 2023 left businesses facing new tax, accounting, and reporting obligations many were not set up for. The firm needed a digital presence from a standing start: no existing traffic, no established brand recognition, no reputation to trade on.',
               'For a new practice, the website is the credibility test. It had to look like the work of an established firm on day one while making it obvious what Northvale does and how to start a conversation.',
             ],
           },
           {
             title: 'What we built',
             body: [
-              'We led with the trigger rather than the firm. The homepage opens on UAE Corporate Tax, VAT, and accounting compliance — the problem visitors are searching for — and only then explains how Northvale addresses it through structured accounting, VAT compliance, financial reporting, and corporate tax support.',
+              'We led with the trigger rather than the firm. The homepage opens on the problem visitors are searching for, UAE Corporate Tax, VAT, and accounting compliance, and only then explains how Northvale addresses it through structured accounting, VAT compliance, financial reporting, and corporate tax support.',
               'The consultation form sits in the hero rather than at the end of a scroll, capturing name, email, country, and the specific service required so enquiries arrive qualified. Service pillars are broken out as distinct routes into the site, and direct phone and WhatsApp contact run alongside the form for visitors who would rather just call.',
             ],
           },

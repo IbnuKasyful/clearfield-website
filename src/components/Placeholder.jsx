@@ -9,7 +9,7 @@ export default function Placeholder({ label, onDark = false, className = '', sty
       className={`placeholder${onDark ? ' placeholder--on-dark' : ''} ${className}`.trim()}
       style={style}
       role="img"
-      aria-label={`${label} — placeholder`}
+      aria-label={`${label} placeholder`}
     >
       <span className="placeholder__label">{label}</span>
     </div>

@@ -98,7 +98,7 @@ export default function Projects() {
               <h3 className="project-card__name">
                 <Link className="project-card__link" to={`/projects/${project.id}`}>
                   {project.name}
-                  <span className="visually-hidden"> — {project.type}, view project</span>
+                  <span className="visually-hidden">, {project.type}, view project</span>
                 </Link>
               </h3>
               <p className="project-card__description">{project.description}</p>
