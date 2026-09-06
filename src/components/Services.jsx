@@ -1,17 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { services } from '../data/site';
-import { gsap, prefersReducedMotion, useMagnetic } from '../lib/motion';
+import { services, whatsappHref } from '../data/site';
+import { gsap, prefersReducedMotion } from '../lib/motion';
 import Reveal from './Reveal';
-import SectionLink from './SectionLink';
 
 export default function Services() {
   const [openId, setOpenId] = useState(services.items[0].id);
-  const sectionRef = useRef(null);
-  const panelRef = useRef(null);
   const bodyRefs = useRef({});
   const mountedRef = useRef(false);
-  const ctaRef = useMagnetic();
 
   // Collapse the closed rows before first paint so nothing flashes open.
   useLayoutEffect(() => {
@@ -48,36 +44,9 @@ export default function Services() {
     });
   }, [openId]);
 
-  // The panel scales up into place as it enters, echoing the artifact.
-  useEffect(() => {
-    const panel = panelRef.current;
-    if (!panel || prefersReducedMotion()) return undefined;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        panel,
-        { scale: 0.62, borderRadius: 60, opacity: 0.6 },
-        {
-          scale: 1,
-          borderRadius: 26,
-          opacity: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 92%',
-            end: 'top 34%',
-            scrub: 0.6,
-          },
-        },
-      );
-    }, panel);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section className="services" id="services" ref={sectionRef}>
-      <div className="services__panel" ref={panelRef}>
+    <section className="services" id="services">
+      <div className="services__panel">
         <div className="services__head">
           <div>
             <Reveal as="span" className="eyebrow eyebrow--on-dark">
@@ -85,6 +54,9 @@ export default function Services() {
             </Reveal>
             <Reveal as="h2" className="services__title">
               {services.heading}
+            </Reveal>
+            <Reveal as="p" className="services__lede">
+              {services.lede}
             </Reveal>
           </div>
           <Reveal className="services__tags">
@@ -139,27 +111,59 @@ export default function Services() {
                         </span>
                       ))}
                     </div>
+
+                    {item.related && (
+                      <p className="service-row__related">
+                        {item.relatedLead}{' '}
+                        {item.related.map((entry, index) => (
+                          <span key={entry.project}>
+                            {index > 0 && ' and '}
+                            <Link to={`/projects/${entry.project}`}>{entry.label}</Link>
+                          </span>
+                        ))}
+                        .
+                      </p>
+                    )}
                   </div>
                   {item.media.length > 0 && (
                     // Collapsed rows are marked inert, so these links leave the
                     // tab order along with the rest of the panel.
                     <div className="service-row__media">
-                      {item.media.map((media) => (
-                        <Link
-                          className="service-row__shot"
-                          to={`/projects/${media.project}`}
-                          key={media.project}
-                        >
+                      {item.media.map((media) => {
+                        const shot = (
                           <img
-                            src={`/projects/${media.project}-4x3.webp`}
+                            src={media.project ? `/projects/${media.project}-4x3.webp` : media.src}
                             alt={media.label}
                             width={1000}
                             height={750}
                             loading="lazy"
                             decoding="async"
                           />
-                        </Link>
-                      ))}
+                        );
+
+                        // Two kinds of media: our own case studies, which link
+                        // to the detail route, and live profiles elsewhere,
+                        // which leave the site.
+                        return media.project ? (
+                          <Link
+                            className="service-row__shot"
+                            to={`/projects/${media.project}`}
+                            key={media.project}
+                          >
+                            {shot}
+                          </Link>
+                        ) : (
+                          <a
+                            className="service-row__shot"
+                            href={media.href}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            key={media.src}
+                          >
+                            {shot}
+                          </a>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -168,9 +172,14 @@ export default function Services() {
           );
         })}
 
-        <SectionLink ref={ctaRef} className="btn btn--light services__cta" href="#contact">
+        <a
+          className="btn btn--light services__cta"
+          href={whatsappHref}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
           {services.cta}&nbsp;↗
-        </SectionLink>
+        </a>
       </div>
     </section>
   );

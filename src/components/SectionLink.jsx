@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 /**
@@ -7,13 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
  * On the home route it stays a plain anchor so the browser's native smooth
  * scroll handles it. Anywhere else it navigates home first and hands the target
  * id to Home via router state, which scrolls once the sections have mounted.
- *
- * The ref is forwarded so `useMagnetic` can reach the underlying anchor.
  */
-const SectionLink = forwardRef(function SectionLink(
-  { href, onClick, children, ...rest },
-  ref,
-) {
+export default function SectionLink({ href, onClick, children, ...rest }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const onHome = pathname === '/';
@@ -27,10 +21,8 @@ const SectionLink = forwardRef(function SectionLink(
   };
 
   return (
-    <a ref={ref} href={onHome ? href : `/${href}`} onClick={handleClick} {...rest}>
+    <a href={onHome ? href : `/${href}`} onClick={handleClick} {...rest}>
       {children}
     </a>
   );
-});
-
-export default SectionLink;
+}

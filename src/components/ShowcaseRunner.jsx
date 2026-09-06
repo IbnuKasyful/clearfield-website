@@ -1,55 +1,76 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { projects } from '../data/site';
-import { gsap, ScrollTrigger, hasFinePointer, prefersReducedMotion } from '../lib/motion';
+import { gsap, prefersReducedMotion } from '../lib/motion';
 
-/** Scrolling down sends the top row left and the bottom row right. */
-const ROWS = [
-  { items: projects.items, direction: 1 },
-  { items: [...projects.items].reverse(), direction: -1 },
-];
+const DRIFT = 34; // strip px travelled per second
+const GLIDE = 0.14; // seconds the strip takes to ease in and out of that drift
 
-const SCROLL_GAIN = 0.6; // strip px travelled per px scrolled
-const POINTER_GAIN = 1; // strip px travelled per px of cursor movement
-const GLIDE = 0.12; // seconds the strip takes to catch up to the scroll
+/**
+ * Cards laid in one group. Every second card drops (see `.runner__card` in the
+ * stylesheet), so a group holding an odd number of projects restarts the
+ * alternation on the same beat and leaves two cards level where the strip
+ * seams. Running the list twice makes the count even and the drop unbroken,
+ * whatever number of projects the site is showing.
+ */
+const cards = projects.items.length % 2 === 0
+  ? projects.items
+  : [...projects.items, ...projects.items];
 
-function Group({ items, hidden }) {
+function Group({ hidden }) {
   return (
     <div className="runner__group" aria-hidden={hidden || undefined}>
-      {items.map((item) => (
-        <Link
-          className="runner__card"
-          to={`/projects/${item.id}`}
-          key={item.id}
-          tabIndex={hidden ? -1 : undefined}
-        >
-          <img
-            className="runner__image"
-            src={`/projects/${item.id}-4x3.webp`}
-            alt={hidden ? '' : `The ${item.name} website`}
-            width={1000}
-            height={750}
-            loading="lazy"
-            decoding="async"
-          />
-          <span className="runner__caption">
-            <strong>{item.name}</strong>
-            <span>{item.type}</span>
-          </span>
-        </Link>
-      ))}
+      {cards.map((item, index) => {
+        // Only the first pass through the real list is announced. Repeats
+        // exist to keep the drop alternating and the loop seamless, so they
+        // stay out of the reading order the way the duplicate group does.
+        const repeat = index >= projects.items.length;
+        const silent = hidden || repeat;
+
+        return (
+          <Link
+            className="runner__card"
+            to={`/projects/${item.id}`}
+            key={`${item.id}-${index}`}
+            aria-hidden={repeat || undefined}
+            tabIndex={silent ? -1 : undefined}
+          >
+            {/* The frame is what crops and rounds the shot. The caption sits
+                outside it, below, so nothing is printed over the artwork. */}
+            <span className="runner__frame">
+              <img
+                className="runner__image"
+                src={`/projects/${item.id}-4x3.webp`}
+                alt={silent ? '' : `The ${item.name} website`}
+                width={1000}
+                height={750}
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="runner__tag">{item.type}</span>
+              <span className="runner__view" aria-hidden="true">
+                View
+              </span>
+            </span>
+
+            <span className="runner__caption">
+              <strong>{item.name}</strong>
+              <span>{item.urlLabel}</span>
+            </span>
+          </Link>
+        );
+      })}
     </div>
   );
 }
 
 /**
- * Two counter-running rows of project shots beneath the hero.
- *
- * Nothing moves on its own. The strip is driven entirely by the scrollbar —
- * down sends the top row left and the bottom row right, up reverses both — and
- * by the cursor while it is over them, which pushes both rows the way it
- * travels. Stop doing either and the strip stops, which keeps the cards
- * clickable.
+ * A single row of project shots beneath the hero, running on its own at a slow
+ * constant drift and nothing else. It was two rows travelling against each
+ * other, which the reader had to resolve before reading anything, and later a
+ * single row shoved along by the scrollbar, which tied the work on show to how
+ * hard someone happened to be scrolling. One row at one speed states the same
+ * thing without asking for attention.
  */
 export default function ShowcaseRunner() {
   const rootRef = useRef(null);
@@ -58,98 +79,75 @@ export default function ShowcaseRunner() {
     const root = rootRef.current;
     if (!root || prefersReducedMotion()) return undefined;
 
-    const tracks = Array.from(root.querySelectorAll('.runner__track'));
-    if (!tracks.length) return undefined;
+    const track = root.querySelector('.runner__track');
+    if (!track) return undefined;
 
     const ctx = gsap.context(() => {
       // No unit: xPercent is already a percentage, and passing one writes junk.
-      const setters = tracks.map((track) => gsap.quickSetter(track, 'xPercent'));
-      // Each row holds two copies of the group, so 50% is one seamless lap.
+      const setter = gsap.quickSetter(track, 'xPercent');
+      // The row holds two copies of the group, so 50% is one seamless lap.
       const wrap = gsap.utils.wrap(-50, 0);
-      const targets = tracks.map(() => 0);
-      const offsets = tracks.map(() => 0);
+      let target = 0;
+      let offset = 0;
 
       // Movement is asked for in px and applied in percent, so the strip
       // travels the same distance whatever width the cards clamp to.
-      let percentPerPx = tracks.map(() => 0);
+      let percentPerPx = 0;
       const measure = () => {
-        percentPerPx = tracks.map((track) => 100 / (track.offsetWidth || 1));
+        percentPerPx = 100 / (track.offsetWidth || 1);
       };
       measure();
 
-      let lastScroll = window.scrollY;
+      // ScrollTrigger used to re-measure this on refresh. Nothing is watching
+      // the scrollbar now, so the row watches its own width instead — the cards
+      // clamp against the viewport, and images landing late reflow the track.
+      const observer = new ResizeObserver(measure);
+      observer.observe(track);
 
-      const trigger = ScrollTrigger.create({
-        onUpdate: (self) => {
-          const position = self.scroll();
-          const delta = position - lastScroll;
-          lastScroll = position;
-
-          ROWS.forEach((row, index) => {
-            targets[index] -= delta * percentPerPx[index] * SCROLL_GAIN * row.direction;
-          });
-        },
-        onRefresh: () => {
-          measure();
-          lastScroll = window.scrollY;
-        },
-      });
+      // Every card is a link, and asking someone to hit a moving one is a poor
+      // trade for the drift. Pointer or keyboard on the row holds it still.
+      let held = false;
+      const hold = () => {
+        held = true;
+      };
+      const release = () => {
+        held = false;
+      };
+      root.addEventListener('pointerenter', hold);
+      root.addEventListener('pointerleave', release);
+      root.addEventListener('focusin', hold);
+      root.addEventListener('focusout', release);
 
       const tick = (time, delta) => {
-        // Frame-rate independent glide toward wherever scroll left the strip.
+        if (!held) target -= DRIFT * percentPerPx * (delta / 1000);
+
+        // Frame-rate independent glide. At a constant drift this only trails the
+        // target by a fixed few px, which is invisible — it earns its keep on
+        // hold and release, where it eases the row to a stop and back up again
+        // instead of cutting the motion dead.
         const ease = 1 - Math.exp(-delta / (GLIDE * 1000));
+        let next = offset + (target - offset) * ease;
 
-        offsets.forEach((offset, index) => {
-          let next = offset + (targets[index] - offset) * ease;
+        // Keep the accumulators near zero. A whole number of laps makes no
+        // visual difference, so offset and target shed them together.
+        const laps = Math.trunc(next / 50) * 50;
+        if (Math.abs(laps) >= 500) {
+          next -= laps;
+          target -= laps;
+        }
 
-          // Keep the accumulators near zero. A whole number of laps makes no
-          // visual difference, so offset and target shed them together.
-          const laps = Math.trunc(next / 50) * 50;
-          if (Math.abs(laps) >= 500) {
-            next -= laps;
-            targets[index] -= laps;
-          }
-
-          offsets[index] = next;
-          setters[index](wrap(next));
-        });
+        offset = next;
+        setter(wrap(next));
       };
       gsap.ticker.add(tick);
 
-      // Touch has no hover, and a drag-scroll over the strip would read as one.
-      const fine = hasFinePointer();
-      let lastX = null;
-
-      const onMove = (event) => {
-        if (event.pointerType !== 'mouse') return;
-
-        if (lastX !== null) {
-          const dx = event.clientX - lastX;
-          // Both rows go the way the cursor goes, like pushing the strip.
-          for (let index = 0; index < targets.length; index += 1) {
-            targets[index] += dx * percentPerPx[index] * POINTER_GAIN;
-          }
-        }
-
-        lastX = event.clientX;
-      };
-
-      const onLeave = () => {
-        lastX = null;
-      };
-
-      if (fine) {
-        root.addEventListener('pointermove', onMove);
-        root.addEventListener('pointerleave', onLeave);
-      }
-
       return () => {
         gsap.ticker.remove(tick);
-        trigger.kill();
-        if (fine) {
-          root.removeEventListener('pointermove', onMove);
-          root.removeEventListener('pointerleave', onLeave);
-        }
+        observer.disconnect();
+        root.removeEventListener('pointerenter', hold);
+        root.removeEventListener('pointerleave', release);
+        root.removeEventListener('focusin', hold);
+        root.removeEventListener('focusout', release);
       };
     }, root);
 
@@ -158,13 +156,11 @@ export default function ShowcaseRunner() {
 
   return (
     <div className="runner" ref={rootRef}>
-      {ROWS.map((row, index) => (
-        <div className="runner__track" key={index}>
-          {/* The second copy makes the -50% translation loop seamlessly. */}
-          <Group items={row.items} />
-          <Group items={row.items} hidden />
-        </div>
-      ))}
+      <div className="runner__track">
+        {/* The second copy makes the -50% translation loop seamlessly. */}
+        <Group />
+        <Group hidden />
+      </div>
     </div>
   );
 }

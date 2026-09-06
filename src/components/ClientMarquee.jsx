@@ -2,10 +2,15 @@ import { useEffect, useRef } from 'react';
 import { projects } from '../data/site';
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../lib/motion';
 
-// The wall runs the mark each client uses on their own live site. Handelsmissie
-// Dubai publishes none of its own, so it keeps the wordmark it had before — the
-// shared ink treatment holds the row together either way.
-const clients = projects.items.map(({ id, name, logo }) => ({ id, name, logo }));
+// The wall runs the mark each client uses on their own live site, but not always
+// the same file the project card shows: `wallLogo` swaps in a copy that suits
+// the ink treatment, or nulls the mark out where it would repeat a brand, in
+// which case the client falls back to a wordmark.
+const clients = projects.items.map(({ id, name, logo, wallLogo }) => ({
+  id,
+  name,
+  logo: wallLogo === undefined ? logo : wallLogo,
+}));
 
 // The loop translates the track by half its width, so each half has to be at
 // least as wide as the viewport or the seam shows as a gap. Four marks are not,

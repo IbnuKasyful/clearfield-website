@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { nav, contact, emailHref } from '../data/site';
-import { useMagnetic } from '../lib/motion';
-import { useTheme } from '../lib/theme';
 import NodeMark from './NodeMark';
-import PullSwitch from './PullSwitch';
 import SectionLink from './SectionLink';
 import Wordmark from './Wordmark';
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const { theme, toggle } = useTheme();
-  // Gentler than the page buttons — the pill leaves it little room to travel.
-  const ctaRef = useMagnetic({ strengthX: 0.1, strengthY: 0.14 });
   const close = () => setOpen(false);
 
   return (
@@ -54,12 +48,10 @@ export default function Nav() {
           <span />
         </button>
 
-        <a ref={ctaRef} className="navpill__cta" href={emailHref}>
+        <a className="navpill__cta" href={emailHref}>
           {contact.email}
         </a>
       </nav>
-
-      <PullSwitch theme={theme} onToggle={toggle} />
     </header>
   );
 }
