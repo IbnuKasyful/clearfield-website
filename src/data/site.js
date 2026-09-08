@@ -196,7 +196,7 @@ export const projects = {
   items: [
     {
       id: 'dubai-unfiltered',
-      name: 'Dubai Unfiltered',
+      name: 'Dubai Ongefilterd',
       type: 'Event Platform',
       url: 'https://dubaiongefilterd.nl/',
       urlLabel: 'dubaiongefilterd.nl',
@@ -213,31 +213,32 @@ export const projects = {
         'Event Website',
         'Registration Integration',
         'Stripe & PayPal Integration',
-        'Email Integration',
+        'CRM Integration',
+        'Email Automation',
         'Responsive Design',
       ],
       detail: {
         summary:
-          'A single-purpose event platform that takes a visitor from landing page to paid, confirmed seat without leaving the site.',
+          'A dedicated event platform combining the website, registration, payments and attendee journey in one digital experience.',
         sections: [
           {
             title: 'The brief',
             body: [
-              'Dubai Ongefilterd is an evening event for entrepreneurs, investors, and professionals looking at opportunities in Dubai and the wider region. It is pitched, as the name promises, as the honest version of the story. It runs to a fixed date, a fixed venue, and a limited number of seats.',
-              'Events like this fail on logistics rather than interest. Registration, payment, confirmation, and the run-up communication all have to work without manual chasing, and the whole funnel has to hold up during the short window when attention is highest.',
+              'Dubai Ongefilterd is a business event and growing community for entrepreneurs, investors and professionals interested in Dubai, the wider region, international business and entrepreneurship. The platform needed to support both the event experience and the practical journey from registration through payment and confirmation.',
+              'Registration, payment, confirmation and pre-event communication needed to work together smoothly, with minimal manual administration for the organising team.',
             ],
           },
           {
             title: 'What we built',
             body: [
-              'The platform is deliberately narrow. One page, one decision: the date, venue, and time are visible immediately, the proposition is stated in a line, and reserving a seat is never more than one click away, either from the fixed header or from the page itself.',
-              'Payment is handled on-site through Stripe with Apple Pay, Google Pay, and card accepted, so no one is bounced to a third-party ticketing host mid-decision. Behind the form, registrations flow into CRM and trigger automated confirmation and reminder sequences, giving the organisers an attendee list that stays current without manual entry.',
+              'We built a dedicated event website with registration and payment integrated directly into the platform. Visitors can view the event details, reserve their place and complete payment without leaving the website.',
+              'Payments are handled through Stripe, including Apple Pay, Google Pay and card payments. Registrations are synced with the CRM and trigger automated confirmations and reminders, keeping attendee information organised without manual entry.',
             ],
           },
         ],
         highlights: [
-          'Single-decision landing page built around one conversion',
-          'On-site Stripe checkout with Apple Pay, Google Pay, and card',
+          'Dedicated event website with integrated registration',
+          'On-site Stripe checkout with Apple Pay, Google Pay and card',
           'Registrations synced to CRM with no manual entry',
           'Automated confirmation and reminder sequences',
         ],
@@ -269,28 +270,29 @@ export const projects = {
       ],
       detail: {
         summary:
-          'A brand and a service site for a commercial cleaning company establishing itself in the UAE, built around one action: request a quote.',
+          'A complete digital presence for a European commercial cleaning company establishing itself in the UAE, including logo, visual identity, website, domain and professional email.',
         sections: [
           {
             title: 'The brief',
             body: [
-              'Lumayra Cleaning LLC brings over fifteen years of European operational experience to the UAE, and sells to businesses rather than households. Commercial cleaning is bought on reliability and on a price quoted against a specific site, which makes the website the first step of a quote rather than a shop.',
-              'The service range needed separating as well. Floor maintenance, specialist cleaning, and regular hygiene cleaning are bought by different people for different reasons; presented as one list they read as an undifferentiated cleaning offer.',
+              'Lumayra Cleaning LLC was establishing its presence in the UAE, bringing more than fifteen years of European operational experience into the local market. The company needed a professional digital identity and website suitable for its new market.',
+              "The website needed to clearly present its commercial cleaning services, make it easy for businesses to request a quote, and provide a professional foundation for the company's UAE operations.",
             ],
           },
           {
             title: 'What we built',
             body: [
-              'Every route through the page ends in the same place. "Get Your Quote Now" sits in the hero, "Get Quote" is pinned in the header, and the phone number runs live beside it for anyone who would rather call than type.',
-              'The three service lines are broken out as their own destinations rather than bullet points, and a three-step explainer (free quote, book, clean) sets expectations before the enquiry instead of after it. The navy and gold identity we built for the brand holds its own against the bright blues the sector defaults to.',
+              "We developed the Lumayra logo and visual identity and applied them across a new UAE website built around the company's commercial cleaning services.",
+              "The website presents the different service categories clearly, provides direct access to quote requests and phone contact, and includes a simple three-step explanation of the customer journey. We also set up the domain and professional email to complete the company's local digital presence.",
             ],
           },
         ],
         highlights: [
-          'One conversion goal, reachable from anywhere on the page',
-          'Three service lines separated into their own routes',
-          'Free quote → book → clean explainer set before the enquiry',
-          'Phone contact running alongside the quote form',
+          'Quote request accessible throughout the website',
+          'Three service lines presented through dedicated sections',
+          'Simple quote → book → clean process clearly explained',
+          'Direct phone contact alongside the quote form',
+          'Logo and visual identity developed for the UAE launch',
         ],
       },
     },
@@ -314,28 +316,28 @@ export const projects = {
       ],
       detail: {
         summary:
-          'The launch presence for a new UAE accounting firm, built to convert regulatory pressure into booked consultations.',
+          'A complete digital launch for a newly established UAE accounting firm, from logo and visual identity to website, domain and professional email.',
         sections: [
           {
             title: 'The brief',
             body: [
-              'Northvale launched into a market with a clear and urgent trigger: the introduction of UAE Corporate Tax in 2023 left businesses facing new tax, accounting, and reporting obligations many were not set up for. The firm needed a digital presence from a standing start: no existing traffic, no established brand recognition, no reputation to trade on.',
-              'For a new practice, the website is the credibility test. It had to look like the work of an established firm on day one while making it obvious what Northvale does and how to start a conversation.',
+              'Northvale was launching as a new accounting and tax firm in the UAE and needed a professional digital presence from the ground up. With no existing website or established visual identity, the business needed a clear and credible foundation for launch.',
+              "The objective was to create a professional presence that clearly communicates Northvale's accounting, VAT and corporate tax services and makes it easy for prospective clients to get in touch.",
             ],
           },
           {
             title: 'What we built',
             body: [
-              'We led with the trigger rather than the firm. The homepage opens on the problem visitors are searching for, UAE Corporate Tax, VAT, and accounting compliance, and only then explains how Northvale addresses it through structured accounting, VAT compliance, financial reporting, and corporate tax support.',
-              'The consultation form sits in the hero rather than at the end of a scroll, capturing name, email, country, and the specific service required so enquiries arrive qualified. Service pillars are broken out as distinct routes into the site, and direct phone and WhatsApp contact run alongside the form for visitors who would rather just call.',
+              "We developed Northvale's logo and visual identity and translated these into a clean, professional website structured around its core accounting, VAT and corporate tax services.",
+              'The website includes a consultation form directly in the hero, clear service sections, and direct phone and WhatsApp contact options. The domain and professional email setup completed the digital foundation for launch.',
             ],
           },
         ],
         highlights: [
-          'Lead capture placed in the hero, qualified by service and country',
-          'Positioning anchored to the 2023 UAE Corporate Tax trigger',
-          'Brand implementation delivered alongside the build',
-          'Phone and WhatsApp contact routes running parallel to the form',
+          'Consultation form integrated directly into the homepage hero',
+          'Logo and visual identity developed alongside the website',
+          'Phone and WhatsApp contact routes integrated alongside the form',
+          'Domain and professional email configured for launch',
         ],
       },
     },
