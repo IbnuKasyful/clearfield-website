@@ -7,9 +7,13 @@ import Projects from '../components/Projects';
 import WhyClearfield from '../components/WhyClearfield';
 import ClientMarquee from '../components/ClientMarquee';
 import Contact from '../components/Contact';
+import { site } from '../data/site';
 import { prefersReducedMotion } from '../lib/motion';
+import { useHead } from '../lib/head';
 
-export default function Home({ ready }) {
+export default function Home() {
+  useHead({ title: site.title, description: site.description, path: '/' });
+
   const { state, hash } = useLocation();
   // Nav anchors hand over router state; the "All projects" link uses a hash.
   const scrollTo = state?.scrollTo || hash.replace('#', '');
@@ -33,7 +37,7 @@ export default function Home({ ready }) {
 
   return (
     <>
-      <Hero ready={ready} />
+      <Hero />
       <About />
       <Services />
       <Projects />

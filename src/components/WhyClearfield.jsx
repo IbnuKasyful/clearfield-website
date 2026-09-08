@@ -17,22 +17,13 @@ export default function WhyClearfield() {
         </Reveal>
       </div>
 
-      {/* Closed cards sit side by side and read vertically; the one under the
-          pointer (or keyboard focus) opens and takes colour, the rest give up
-          their width. */}
+      {/* Four open cards. Nothing here is interactive, so nothing here is a tab
+          stop — the cards used to be focusable only so a keyboard could open
+          them, which is no longer something that has to happen. */}
       <Reveal className="why__cards">
         {why.items.map((item) => (
-          <article
-            key={item.number}
-            className="why-card"
-            style={{ '--tone': item.tone }}
-            tabIndex={0}
-          >
+          <article key={item.number} className="why-card" style={{ '--tone': item.tone }}>
             <span className="why-card__number">{item.number}</span>
-            {/* The closed-state label — the real heading lives in the body. */}
-            <span className="why-card__spine" aria-hidden="true">
-              {item.title}
-            </span>
             <div className="why-card__body">
               <h3 className="why-card__title">{item.title}</h3>
               <p className="why-card__text">{item.body}</p>

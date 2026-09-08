@@ -1,10 +1,7 @@
 import { contactSection, contact, emailHref, whatsappHref } from '../data/site';
-import { useMagnetic } from '../lib/motion';
 import Reveal from './Reveal';
 
 export default function Contact() {
-  const ctaRef = useMagnetic();
-
   return (
     <section className="contact" id="contact">
       <div className="contact__panel">
@@ -19,7 +16,7 @@ export default function Contact() {
             {contactSection.body}
           </Reveal>
           <div className="contact__actions">
-            <a ref={ctaRef} className="btn btn--primary" href={emailHref}>
+            <a className="btn btn--primary" href={emailHref}>
               {contactSection.cta}
             </a>
             <a className="btn btn--outline" href={whatsappHref} target="_blank" rel="noreferrer">
@@ -50,7 +47,6 @@ export default function Contact() {
             <span className="contact__detail-label">Hours</span>
             <span className="contact__detail-value">{contact.hours}</span>
           </div>
-          <p className="contact__closing">{contactSection.closingLine}</p>
         </Reveal>
       </div>
     </section>

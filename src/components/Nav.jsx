@@ -1,17 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { nav, contact, emailHref } from '../data/site';
-import { useMagnetic } from '../lib/motion';
-import { useTheme } from '../lib/theme';
-import PixelMark from './PixelMark';
-import PullSwitch from './PullSwitch';
+import NodeMark from './NodeMark';
 import SectionLink from './SectionLink';
+import Wordmark from './Wordmark';
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const { theme, toggle } = useTheme();
-  // Gentler than the page buttons — the pill leaves it little room to travel.
-  const ctaRef = useMagnetic({ strengthX: 0.1, strengthY: 0.14 });
   const close = () => setOpen(false);
 
   return (
@@ -20,10 +15,10 @@ export default function Nav() {
         {/* Reads as a mark at rest; opens into the full lockup on hover. */}
         <Link className="navpill__brand" to="/" onClick={close} aria-label="Clearfield home">
           <span className="navpill__mark">
-            <PixelMark width={24} height={17} />
+            <NodeMark width={28} height={13.6} />
           </span>
           <span className="navpill__wordmark" aria-hidden="true">
-            Clearfield
+            <Wordmark />
           </span>
         </Link>
 
@@ -53,12 +48,10 @@ export default function Nav() {
           <span />
         </button>
 
-        <a ref={ctaRef} className="navpill__cta" href={emailHref}>
+        <a className="navpill__cta" href={emailHref}>
           {contact.email}
         </a>
       </nav>
-
-      <PullSwitch theme={theme} onToggle={toggle} />
     </header>
   );
 }

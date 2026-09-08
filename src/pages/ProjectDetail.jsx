@@ -1,26 +1,28 @@
-import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { projects, projectById, projectDetail, whatsappHref } from '../data/site';
-import { useMagnetic } from '../lib/motion';
-import PhysicsPills from '../components/PhysicsPills';
-import PixelMark from '../components/PixelMark';
+import { useHead } from '../lib/head';
+import PillList from '../components/PillList';
+import NodeMark from '../components/NodeMark';
 import Reveal from '../components/Reveal';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
   const project = projectById(slug);
-  const ctaRef = useMagnetic();
 
-  // The tab title is the only head data this static build manages per route.
-  useEffect(() => {
-    const previous = document.title;
-    document.title = project
-      ? `${project.name} — ${project.type} | Clearfield`
-      : `${projectDetail.notFound.heading} | Clearfield`;
-    return () => {
-      document.title = previous;
-    };
-  }, [project]);
+  useHead(
+    project
+      ? {
+          title: `${project.name}, ${project.type} | Clearfield`,
+          description: project.description,
+          path: `/projects/${project.id}`,
+          image: `/projects/${project.id}.webp`,
+        }
+      : {
+          title: `${projectDetail.notFound.heading} | Clearfield`,
+          description: projectDetail.notFound.body,
+          path: '/404',
+        },
+  );
 
   if (!project) {
     return (
@@ -46,7 +48,7 @@ export default function ProjectDetail() {
 
       <header className="project-page__head">
         <Reveal as="p" className="eyebrow project-page__eyebrow">
-          <PixelMark width={16} height={12} />
+          <NodeMark width={18} height={8.8} />
           {project.type}
         </Reveal>
         <Reveal as="h1" className="project-page__title">
@@ -96,7 +98,7 @@ export default function ProjectDetail() {
         <aside className="project-page__aside">
           <Reveal className="project-page__panel">
             <p className="project-page__panel-title">{projectDetail.deliveredLabel}</p>
-            <PhysicsPills className="project-page__delivered" items={project.delivered} />
+            <PillList className="project-page__delivered" items={project.delivered} />
           </Reveal>
 
           {detail?.highlights && (
@@ -105,7 +107,7 @@ export default function ProjectDetail() {
               <ul className="project-page__highlights">
                 {detail.highlights.map((item) => (
                   <li key={item}>
-                    <PixelMark width={13} height={9} />
+                    <NodeMark width={15} height={7.3} />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -120,7 +122,7 @@ export default function ProjectDetail() {
           <h2 className="project-page__cta-heading">{projectDetail.ctaHeading}</h2>
           <p className="project-page__cta-body">{projectDetail.ctaBody}</p>
         </div>
-        <a ref={ctaRef} className="btn btn--primary" href={whatsappHref} target="_blank" rel="noreferrer noopener">
+        <a className="btn btn--primary" href={whatsappHref} target="_blank" rel="noreferrer noopener">
           {projectDetail.ctaLabel}
         </a>
       </Reveal>

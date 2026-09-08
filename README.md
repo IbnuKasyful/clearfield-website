@@ -49,7 +49,8 @@ src/
     Contact.jsx        closing CTA and contact details
     Footer.jsx         wordmark, links, back-to-top
     Placeholder.jsx    labelled stand-in for artwork
-    PixelMark.jsx      three-step pixel logo mark
+    NodeMark.jsx       four-node logo mark, linked and animatable
+    Wordmark.jsx       "Clearfield" with the coral dot, optionally plus the mark
     Reveal.jsx         scroll-into-view wrapper
 ```
 

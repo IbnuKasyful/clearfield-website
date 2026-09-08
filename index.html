@@ -3,48 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clearfield — Digital built for business</title>
+    <title>Clearfield | Digital built for business</title>
     <meta
       name="description"
-      content="Clearfield helps businesses grow online through website design and development, digital marketing, and ongoing website support."
+      content="Clearfield Digital helps international businesses build or adapt their digital footprint to suit the local market: websites, domains, professional email, visual identity and social setup."
     />
-    <meta name="theme-color" content="#f2f0ec" />
-    <!-- Resolve the theme before first paint so a dark visitor never sees a
-         flash of the light page. Mirrors resolveTheme() in src/lib/theme.js. -->
-    <script>
-      (function () {
-        try {
-          var stored = window.localStorage.getItem('clearfield-theme');
-          var theme =
-            stored === 'light' || stored === 'dark'
-              ? stored
-              : window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light';
-          document.documentElement.dataset.theme = theme;
-          if (theme === 'dark') {
-            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d1015');
-          }
-        } catch (error) {
-          document.documentElement.dataset.theme = 'light';
-        }
-      })();
-    </script>
+    <meta name="theme-color" content="#ffffff" />
     <!-- Absolute: a relative path would resolve against /projects/ on a
          project detail route and 404. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <!-- The homepage values. Project routes overwrite title, description,
+         canonical and the og:* tags at runtime, see src/lib/head.js. -->
+    <link rel="canonical" href="https://clearfield.ae/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Clearfield — Digital built for business" />
+    <meta property="og:site_name" content="Clearfield" />
+    <meta property="og:url" content="https://clearfield.ae/" />
+    <meta property="og:title" content="Clearfield | Digital built for business" />
     <meta
       property="og:description"
-      content="Professional website development and digital marketing that support your business growth."
+      content="Professional digital execution for businesses entering a new market."
     />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Clearfield",
+        "url": "https://clearfield.ae/",
+        "email": "info@clearfield.ae",
+        "telephone": "+971585300315",
+        "description": "Clearfield Digital helps international businesses build or adapt their digital footprint to suit the local market: websites, domains, professional email, visual identity and social setup.",
+        "parentOrganization": { "@type": "Organization", "name": "The Atty Group" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE" }
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
