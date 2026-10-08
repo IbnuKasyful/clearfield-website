@@ -1,6 +1,44 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (GA4 property 558072359). Enhanced Measurement's
+         history-change detection did not register React Router navigations
+         (tested 8 Oct 2026), so it is switched off on the stream and route
+         changes send page_view here instead, after head.js has set the title.
+         contact_click is one delegated capture-phase listener so it survives
+         React re-renders and catches clicks on children of the link. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVF2ZP3HEV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZVF2ZP3HEV');
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        var h = a.getAttribute('href') || '', m = null;
+        if (/^mailto:/i.test(h)) m = 'email';
+        else if (/^tel:/i.test(h)) m = 'phone';
+        else if (/wa\.me\/|api\.whatsapp\.com|whatsapp:/i.test(h)) m = 'whatsapp';
+        if (m) gtag('event', 'contact_click', { contact_method: m, link_url: h, transport_type: 'beacon' });
+      }, true);
+      (function () {
+        var last = location.pathname + location.search;
+        function routeChanged() {
+          setTimeout(function () {
+            var p = location.pathname + location.search;
+            if (p === last) return;
+            last = p;
+            gtag('event', 'page_view', { page_location: location.href, page_title: document.title });
+          }, 150);
+        }
+        ['pushState', 'replaceState'].forEach(function (k) {
+          var orig = history[k];
+          history[k] = function () { var r = orig.apply(this, arguments); routeChanged(); return r; };
+        });
+        window.addEventListener('popstate', routeChanged);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Clearfield | Digital built for business</title>
